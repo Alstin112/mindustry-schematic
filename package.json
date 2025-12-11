@@ -1,0 +1,27 @@
+{
+  "name": "mindustry-schematic",
+  "version": "1.0.0",
+  "main": "out/index.js",
+  "scripts": {
+    "download-mindustry-images": "git clone --no-checkout --depth=1 --filter=tree:0 https://github.com/Anuken/Mindustry && cd Mindustry && git sparse-checkout set --no-cone /core/assets-raw/sprites/ && git checkout",
+    "test": "cls && jest"
+  },
+  "keywords": [],
+  "author": "Alstin112",
+  "license": "ISC",
+  "type": "commonjs",
+  "description": "",
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.19.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5"
+  },
+  "dependencies": {
+    "canvas": "^3.2.0"
+  },
+  "exports": {
+    ".": "./out/index.js",
+    "./vanilla-addon": "./out/Vanilla/addon.js"
+  }
+}
