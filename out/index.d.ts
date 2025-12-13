@@ -331,6 +331,7 @@ export declare class Schematic {
     get buildingIdArray(): Uint16Array;
     getBuildingAt(x: number, y: number): DefaultBlockBuilding | null;
     toImageBuffer(): Buffer<ArrayBufferLike>;
+    getBuildCost(): Map<Item, number>;
     static BuildingInfoChecker<T extends number>(typeNumber: T, info: BuildingInfo<any>): info is BuildingInfo<T>;
 }
 export {};

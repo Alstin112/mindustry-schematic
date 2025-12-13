@@ -661,6 +661,17 @@ class Schematic {
         }
         return canvas.toBuffer();
     }
+    getBuildCost() {
+        var _a;
+        const costMap = new Map();
+        for (const building of this.buildings) {
+            for (const req of building.block.requirements) {
+                const current = (_a = costMap.get(req.item)) !== null && _a !== void 0 ? _a : 0;
+                costMap.set(req.item, current + req.amount);
+            }
+        }
+        return costMap;
+    }
     static BuildingInfoChecker(typeNumber, info) {
         return info.configType === typeNumber;
     }
