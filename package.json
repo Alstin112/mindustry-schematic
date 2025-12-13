@@ -1,6 +1,6 @@
 {
   "name": "mindustry-schematic",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "out/index.js",
   "scripts": {
     "download-mindustry-images": "git clone --no-checkout --depth=1 --filter=tree:0 https://github.com/Anuken/Mindustry && cd Mindustry && git sparse-checkout set --no-cone /core/assets-raw/sprites/ && git checkout",
