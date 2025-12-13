@@ -784,6 +784,17 @@ export class Schematic {
         return canvas.toBuffer();
     }
 
+    getBuildCost(): Map<Item, number> {
+        const costMap: Map<Item, number> = new Map();
+        for (const building of this.buildings) {
+            for (const req of building.block.requirements) {
+                const current = costMap.get(req.item) ?? 0;
+                costMap.set(req.item, current + req.amount);
+            }
+        }
+        return costMap;
+    }
+
     static BuildingInfoChecker<T extends number>(typeNumber: T, info: BuildingInfo<any>): info is BuildingInfo<T> {
         return info.configType === typeNumber;
     }
