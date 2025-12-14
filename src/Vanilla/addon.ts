@@ -59,9 +59,7 @@ export const BlockMap = {
     // new metal walls
     // ores
     // wall ores
-    // crafting
-
-
+    // #region crafting
     "graphite-press": new CrafterBlock("graphite-press", {
         size: 2,
         craftTime: 90,
@@ -147,7 +145,7 @@ export const BlockMap = {
         requirements: [{ item: Items.get("lead")!, amount: 65 }, { item: Items.get("silicon")!, amount: 40 }, { item: Items.get("titanium")!, amount: 60 }],
         output: [{ item: Fluids.get("cryofluid")!, amount: 12 }],
         size: 2,
-        // 		drawer = new DrawMulti(new DrawRegion("-bottom"), new DrawLiquidTile(Liquids.water), new DrawLiquidTile(Liquids.cryofluid){{drawLiquidLight = true;}}, new DrawDefault());,
+        // 		drawer = new DrawMulti(new DrawRegion("-bottom"), new DrawLiquidTile(Liquids.water), new DrawLiquidTile(Liquids.cryofluid, {drawLiquidLight = true;}}, new DrawDefault());,
         // 		liquidCapacity = 36f;,
         craftTime: 120,
         // 		lightLiquid = Liquids.cryofluid;,
@@ -231,12 +229,150 @@ export const BlockMap = {
         requirements: [{ item: Items.get("graphite")!, amount: 5 }, { item: Items.get("lead")!, amount: 15 }],
         powerConsumption: 0.50
     }),
-
-
-    // crafting - erekir
+    // #endregion
+    // #region crafting - erekir
+    // #endregion
     // sandbox
     "item-source": new SorterLikeBlock('item-source'),
     // defense
+    "copper-wall": new DefaultBlock("copper-wall", {
+        requirements: [{ item: Items.get("copper")!, amount: 6 }],
+    }),
+
+    "copper-wall-large": new DefaultBlock("copper-wall-large", {
+        requirements: [{ item: Items.get("copper")!, amount: 24 }],
+        size: 2
+    }),
+
+    "titanium-wall": new DefaultBlock("titanium-wall", {
+        requirements: [{ item: Items.get("titanium")!, amount: 6 }],
+    }),
+
+    "titanium-wall-large": new DefaultBlock("titanium-wall-large", {
+        requirements: [{ item: Items.get("titanium")!, amount: 24 }],
+        size: 2
+    }),
+
+    "plastanium-wall": new DefaultBlock("plastanium-wall", {
+        requirements: [{ item: Items.get("plastanium")!, amount: 5 }, { item: Items.get("metaglass")!, amount: 2 }],
+    }),
+
+    "plastanium-wall-large": new DefaultBlock("plastanium-wall-large", {
+        requirements: [{ item: Items.get("plastanium")!, amount: 20 }, { item: Items.get("metaglass")!, amount: 8 }],
+        size: 2
+    }),
+
+    "thorium-wall": new DefaultBlock("thorium-wall", {
+        requirements: [{ item: Items.get("thorium")!, amount: 6 }],
+    }),
+
+    "thorium-wall-large": new DefaultBlock("thorium-wall-large", {
+        requirements: [{ item: Items.get("thorium")!, amount: 24 }],
+        size: 2
+    }),
+
+    "phase-wall": new DefaultBlock("phase-wall", {
+        requirements: [{ item: Items.get("phase-fabric")!, amount: 6 }],
+    }),
+
+    "phase-wall-large": new DefaultBlock("phase-wall-large", {
+        requirements: [{ item: Items.get("phase-fabric")!, amount: 24 }],
+        size: 2
+    }),
+
+    "surge-wall": new DefaultBlock("surge-wall", {
+        requirements: [{ item: Items.get("surge-alloy")!, amount: 6 }],
+        size: 2
+    }),
+
+    "surge-wall-large": new DefaultBlock("surge-wall-large", {
+        requirements: [{ item: Items.get("surge-alloy")!, amount: 24 }],
+        size: 2
+    }),
+
+    "door": new DefaultBlock("door", {
+        requirements: [{ item: Items.get("titanium")!, amount: 6 }, { item: Items.get("silicon")!, amount: 4 }],
+    }),
+
+    "door-large": new DefaultBlock("door-large", {
+        requirements: [{ item: Items.get("titanium")!, amount: 24 }, { item: Items.get("silicon")!, amount: 16 }],
+        size: 2
+    }),
+
+    "scrap-wall": new DefaultBlock("scrap-wall", {
+        requirements: [{ item: Items.get("scrap")!, amount: 6 }],
+        // variants = 5;
+    }),
+
+    "scrap-wall-large": new DefaultBlock("scrap-wall-large", {
+        requirements: [{ item: Items.get("scrap")!, amount: 24 }],
+        size: 2
+        // variants = 4;
+    }),
+
+    "scrap-wall-huge": new DefaultBlock("scrap-wall-huge", {
+        requirements: [{ item: Items.get("scrap")!, amount: 54 }],
+        size: 3,
+        // variants = 3;
+    }),
+
+    "scrap-wall-gigantic": new DefaultBlock("scrap-wall-gigantic", {
+        requirements: [{ item: Items.get("scrap")!, amount: 96 }],
+        size: 4,
+    }),
+
+    "thruster": new DefaultBlock("thruster", {
+        requirements: [{ item: Items.get("scrap")!, amount: 96 }],
+        size: 4,
+    }),
+
+    "beryllium-wall": new DefaultBlock("beryllium-wall", {
+        requirements: [{ item: Items.get("beryllium")!, amount: 6 }],
+    }),
+
+    "beryllium-wall-large": new DefaultBlock("beryllium-wall-large", {
+        requirements: [{ item: Items.get("beryllium")!, amount: 24 }],
+        size: 2
+    }),
+
+    "tungsten-wall": new DefaultBlock("tungsten-wall", {
+        requirements: [{ item: Items.get("tungsten")!, amount: 6 }],
+    }),
+
+    "tungsten-wall-large": new DefaultBlock("tungsten-wall-large", {
+        requirements: [{ item: Items.get("tungsten")!, amount: 24 }],
+        size: 2
+    }),
+
+    "blast-door": new DefaultBlock("blast-door", {
+        requirements: [{ item: Items.get("tungsten")!, amount: 24 }, { item: Items.get("silicon")!, amount: 24 }],
+        size: 2
+    }),
+
+    "reinforced-surge-wall": new DefaultBlock("reinforced-surge-wall", {
+        requirements: [{ item: Items.get("surge-alloy")!, amount: 6 }, { item: Items.get("tungsten")!, amount: 2 }],
+    }),
+
+    "reinforced-surge-wall-large": new DefaultBlock("reinforced-surge-wall-large", {
+        requirements: [{ item: Items.get("surge-alloy")!, amount: 24 }, { item: Items.get("tungsten")!, amount: 8 }],
+        size: 2
+    }),
+
+    "carbide-wall": new DefaultBlock("carbide-wall", {
+        requirements: [{ item: Items.get("thorium")!, amount: 6 }, { item: Items.get("carbide")!, amount: 6 }],
+    }),
+
+    "carbide-wall-large": new DefaultBlock("carbide-wall-large", {
+        requirements: [{ item: Items.get("thorium")!, amount: 24 }, { item: Items.get("carbide")!, amount: 24 }],
+        size: 2
+    }),
+
+    "shielded-wall": new DefaultBlock("shielded-wall", {
+        requirements: [{ item: Items.get("phase-fabric")!, amount: 20 }, { item: Items.get("surge-alloy")!, amount: 12 }, { item: Items.get("beryllium")!, amount: 12 }],
+        powerConsumption: 3 / 60,
+        size: 2
+    }),
+
     // walls erekir
     // defense - erekir
     // transport
@@ -244,27 +380,31 @@ export const BlockMap = {
     "titanium-conveyor": new ArmoredConveyorBlock('titanium-conveyor', { requirements: [{ item: Items.get("titanium")!, amount: 1 }, { item: Items.get("copper")!, amount: 1 }, { item: Items.get("lead")!, amount: 1 }] }),
     "plastanium-conveyor": new StackConveyorBlock('plastanium-conveyor', { requirements: [{ item: Items.get("plastanium")!, amount: 1 }, { item: Items.get("silicon")!, amount: 1 }, { item: Items.get("graphite")!, amount: 1 }] }),
     "armored-conveyor": new ArmoredConveyorBlock('armored-conveyor', { requirements: [{ item: Items.get("plastanium")!, amount: 1 }, { item: Items.get("thorium")!, amount: 1 }, { item: Items.get("metaglass")!, amount: 1 }] }),
-    "junction": new DefaultBlock('junction', {requirements: [{ item: Items.get("copper")!, amount: 3 }]}),
-    "bridge-conveyor": new BridgeBlock('bridge-conveyor', {requirements: [{ item: Items.get("copper")!, amount: 6 }, { item: Items.get("lead")!, amount: 6 }]}),
-    "phase-conveyor": new BridgeBlock('phase-conveyor', {requirements: [
-        { item: Items.get("phase-fabric")!, amount: 5 },
-        { item: Items.get("silicon")!, amount: 7 },
-        { item: Items.get("lead")!, amount: 10 },
-        { item: Items.get("graphite")!, amount: 10 }
-    ]}), 
-    "sorter": new SorterLikeBlock('sorter', {requirements: [{ item: Items.get("lead")!, amount: 2 }, { item: Items.get("copper")!, amount: 2 }]}),
-    "inverted-sorter": new SorterLikeBlock('inverted-sorter', {requirements: [{ item: Items.get("lead")!, amount: 2 }, { item: Items.get("copper")!, amount: 2 }]}),
-    "router": new DefaultBlock('router', {requirements: [{ item: Items.get("copper")!, amount: 3 }]}),
-    "distributor": new DefaultBlock('distributor', {requirements: [{ item: Items.get("copper")!, amount: 4 }, { item: Items.get("lead")!, amount: 4 }]}),
-    "overflow-gate": new DefaultBlock('overflow-gate', {requirements: [{ item: Items.get("copper")!, amount: 4 }, { item: Items.get("lead")!, amount: 2 }]}),
-    "underflow-gate": new DefaultBlock('underflow-gate', {requirements: [{ item: Items.get("copper")!, amount: 4 }, { item: Items.get("lead")!, amount: 2 }]}),
-    "unloader": new SorterLikeBlock('unloader', {requirements: [{ item: Items.get("titanium")!, amount: 25 }, { item: Items.get("silicon")!, amount: 30 }]}),
-    "mass-driver": new DefaultBlock('mass-driver', {requirements: [
-        { item: Items.get("titanium")!, amount: 125 },
-        { item: Items.get("silicon")!, amount: 75 },
-        { item: Items.get("lead")!, amount: 125 },
-        { item: Items.get("thorium")!, amount: 50 }
-    ]}),
+    "junction": new DefaultBlock('junction', { requirements: [{ item: Items.get("copper")!, amount: 3 }] }),
+    "bridge-conveyor": new BridgeBlock('bridge-conveyor', { requirements: [{ item: Items.get("copper")!, amount: 6 }, { item: Items.get("lead")!, amount: 6 }] }),
+    "phase-conveyor": new BridgeBlock('phase-conveyor', {
+        requirements: [
+            { item: Items.get("phase-fabric")!, amount: 5 },
+            { item: Items.get("silicon")!, amount: 7 },
+            { item: Items.get("lead")!, amount: 10 },
+            { item: Items.get("graphite")!, amount: 10 }
+        ]
+    }),
+    "sorter": new SorterLikeBlock('sorter', { requirements: [{ item: Items.get("lead")!, amount: 2 }, { item: Items.get("copper")!, amount: 2 }] }),
+    "inverted-sorter": new SorterLikeBlock('inverted-sorter', { requirements: [{ item: Items.get("lead")!, amount: 2 }, { item: Items.get("copper")!, amount: 2 }] }),
+    "router": new DefaultBlock('router', { requirements: [{ item: Items.get("copper")!, amount: 3 }] }),
+    "distributor": new DefaultBlock('distributor', { requirements: [{ item: Items.get("copper")!, amount: 4 }, { item: Items.get("lead")!, amount: 4 }] }),
+    "overflow-gate": new DefaultBlock('overflow-gate', { requirements: [{ item: Items.get("copper")!, amount: 4 }, { item: Items.get("lead")!, amount: 2 }] }),
+    "underflow-gate": new DefaultBlock('underflow-gate', { requirements: [{ item: Items.get("copper")!, amount: 4 }, { item: Items.get("lead")!, amount: 2 }] }),
+    "unloader": new SorterLikeBlock('unloader', { requirements: [{ item: Items.get("titanium")!, amount: 25 }, { item: Items.get("silicon")!, amount: 30 }] }),
+    "mass-driver": new DefaultBlock('mass-driver', {
+        requirements: [
+            { item: Items.get("titanium")!, amount: 125 },
+            { item: Items.get("silicon")!, amount: 75 },
+            { item: Items.get("lead")!, amount: 125 },
+            { item: Items.get("thorium")!, amount: 50 }
+        ]
+    }),
     // transport - alternate
     // liquid
     "conduit": new ConduitBlock('conduit'),
