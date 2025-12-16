@@ -89,14 +89,12 @@ StackConveyorBlock.building = class StackConveyorBuilding extends StorageLikeBlo
         else {
             image = this.requestImage(`@-0`);
             edge = ~(sRecieving | (lookingToStack ? 0b0001 : 0));
-            console.log(sRecieving.toString(2).padStart(4, '0'), lookingToStack);
         }
         edge &= 0b1111;
         if (!image || !imageEdge)
             return ctx.drawImage(index_1.DefaultBlock.ohno, offsetX - 8, offsetY - 8);
         offsetX += this.x * 32;
         offsetY += this.y * 32;
-        console.log(edge.toString(2).padStart(4, '0'));
         ctx.save();
         ctx.translate(offsetX + 16, offsetY + 16);
         ctx.rotate(((_x = this.rotation) !== null && _x !== void 0 ? _x : 0) * (-Math.PI / 2));
@@ -169,6 +167,12 @@ ConveyorBlock.building = class ConveyorBuilding extends StorageLikeBlock.buildin
         ctx.drawImage(image, offsetX, offsetY);
         ctx.restore();
     }
+    sendsItemsToDir(dir) {
+        return this.rotation === dir;
+    }
+    receivesItemsFromDir(dir) {
+        return true;
+    }
 };
 class ArmoredConveyorBlock extends StorageLikeBlock {
 }
@@ -224,6 +228,12 @@ ArmoredConveyorBlock.building = class ArmoredConveyorBuilding extends StorageLik
         ctx.drawImage(image, offsetX, offsetY);
         ctx.restore();
     }
+    sendsItemsToDir(dir) {
+        return this.rotation === dir;
+    }
+    receivesItemsFromDir(dir) {
+        return true;
+    }
 };
 class ConduitBlock extends StorageLikeBlock {
     constructor() {
@@ -260,7 +270,6 @@ ConduitBlock.building = class ConduitBuilding extends StorageLikeBlock.building 
         else if (this.rotation === helpers_1.Direction.up) { // look up
             blending = (right ? 1 : 0) | (down ? 2 : 0) | (left ? 4 : 0);
         }
-        console.log(blending);
         flip = (blending === 1) || (blending === 6);
         flipx = (this.rotation === helpers_1.Direction.up) || (this.rotation === helpers_1.Direction.down) ? true : false;
         imageId = [0, 1, 0, 2, 1, 4, 2, 3][blending];
@@ -738,25 +747,37 @@ class PowerNodeBlock extends index_1.DefaultBlock {
     constructor() {
         super(...arguments);
         this.distributesPower = true;
+        this.hasPowerGrid = true;
     }
 }
 exports.PowerNodeBlock = PowerNodeBlock;
 PowerNodeBlock.building = class PowerNodeBuilding extends index_1.DefaultBlock.building {
     constructor(block, schematic, info) {
         super(block, schematic, info);
-        this.connectedBuildings = [];
-        if (index_1.Schematic.BuildingInfoChecker(8, info)) {
-            for (const coord of info.config) {
-                const b = schematic.getBuildingAt(coord.x, coord.y);
-                if (b)
-                    this.connectedBuildings.push(b);
-            }
+        this.connectedCoords = [];
+        if (index_1.Schematic.BuildingInfoChecker(8, info))
+            this.connectedCoords = info.config;
+    }
+    get connectedBuildings() {
+        if (this._connectedBuildings)
+            return this._connectedBuildings;
+        this._connectedBuildings = [];
+        for (const coord of this.connectedCoords) {
+            const b = this.schematic.getBuildingAt(this.x + coord.x, this.y - coord.y);
+            if (b)
+                this._connectedBuildings.push(b);
         }
+        return this._connectedBuildings;
+    }
+    getConnectedPowerBuildings() {
+        const buildings = super.getConnectedPowerBuildings();
+        return buildings.concat(this.connectedBuildings);
     }
 };
 class BatteryBlock extends index_1.DefaultBlock {
     constructor(name, config) {
         super(name, config);
+        this.hasPowerGrid = true;
         this.distributesPower = true;
         this.holds = config.powerBuffer;
     }
@@ -765,11 +786,22 @@ exports.BatteryBlock = BatteryBlock;
 BatteryBlock.building = class BatteryBuilding extends index_1.DefaultBlock.building {
 };
 class DiodeBlock extends index_1.DefaultBlock {
+    constructor() {
+        super(...arguments);
+        this.hasPowerGrid = true;
+    }
 }
 exports.DiodeBlock = DiodeBlock;
 DiodeBlock.building = class DiodeBuilding extends index_1.DefaultBlock.building {
-    sendsPowerToDir(dir) {
-        return this.rotation === dir;
+    getConnectedPowerBuildings() {
+        const buildings = [];
+        const buildingfront = this.getBuildingAtRotation(this.rotation);
+        if (buildingfront && buildingfront.block.hasPowerGrid)
+            buildings.push(buildingfront);
+        const buildingback = this.getBuildingAtRotation((this.rotation + 2) & 0b11);
+        if (buildingback && buildingback.block.hasPowerGrid)
+            buildings.push(buildingback);
+        return buildings;
     }
 };
 class GeneratorBlock extends ConsumerBlock {

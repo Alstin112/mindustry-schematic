@@ -393,8 +393,8 @@ exports.BlockMap = {
     // walls erekir
     // defense - erekir
     // #region distribution
-    "conveyor": new blocks_1.ArmoredConveyorBlock('conveyor', { requirements: [{ content: exports.Items.get("copper"), amount: 1 }] }),
-    "titanium-conveyor": new blocks_1.ArmoredConveyorBlock('titanium-conveyor', { requirements: [{ content: exports.Items.get("titanium"), amount: 1 }, { content: exports.Items.get("copper"), amount: 1 }, { content: exports.Items.get("lead"), amount: 1 }] }),
+    "conveyor": new blocks_1.ConveyorBlock('conveyor', { requirements: [{ content: exports.Items.get("copper"), amount: 1 }] }),
+    "titanium-conveyor": new blocks_1.ConveyorBlock('titanium-conveyor', { requirements: [{ content: exports.Items.get("titanium"), amount: 1 }, { content: exports.Items.get("copper"), amount: 1 }, { content: exports.Items.get("lead"), amount: 1 }] }),
     "plastanium-conveyor": new blocks_1.StackConveyorBlock('plastanium-conveyor', { requirements: [{ content: exports.Items.get("plastanium"), amount: 1 }, { content: exports.Items.get("silicon"), amount: 1 }, { content: exports.Items.get("graphite"), amount: 1 }] }),
     "armored-conveyor": new blocks_1.ArmoredConveyorBlock('armored-conveyor', { requirements: [{ content: exports.Items.get("plastanium"), amount: 1 }, { content: exports.Items.get("thorium"), amount: 1 }, { content: exports.Items.get("metaglass"), amount: 1 }] }),
     "junction": new index_1.DefaultBlock('junction', { requirements: [{ content: exports.Items.get("copper"), amount: 3 }] }),

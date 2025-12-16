@@ -1,5 +1,5 @@
 import { Image } from "canvas";
-import { BridgeBlock, ConduitBlock, StackConveyorBlock, DrillBlock, ProcessorBlock, SorterLikeBlock, ArmoredConveyorBlock, TurretBlock, CrafterBlock, SeparatorBlock, PhaseWaverBlock, PulverizerBlock, MultiPressBlock, ConsumerBlock, PowerNodeBlock, DiodeBlock, BatteryBlock, GeneratorBlock } from "./blocks";
+import { BridgeBlock, ConduitBlock, StackConveyorBlock, DrillBlock, ProcessorBlock, SorterLikeBlock, ArmoredConveyorBlock, TurretBlock, CrafterBlock, SeparatorBlock, PhaseWaverBlock, PulverizerBlock, MultiPressBlock, ConsumerBlock, PowerNodeBlock, DiodeBlock, BatteryBlock, GeneratorBlock, ConveyorBlock } from "./blocks";
 import { DefaultBlock, Fluid, Item, SchematicAddons } from "../index";
 export declare function ImageRequester(blockName: string): Image;
 export declare const Items: Map<"copper" | "lead" | "metaglass" | "graphite" | "sand" | "coal" | "titanium" | "thorium" | "scrap" | "silicon" | "plastanium" | "phase-fabric" | "surge-alloy" | "spore-pod" | "blast-compound" | "pyratite" | "beryllium" | "tungsten" | "oxide" | "carbide" | "fissile-matter" | "dormant-cyst", Item>;
@@ -63,8 +63,8 @@ export declare const BlockMap: {
     "build-tower": ConsumerBlock;
     "regen-projector": ConsumerBlock;
     "shockwave-tower": ConsumerBlock;
-    conveyor: ArmoredConveyorBlock;
-    "titanium-conveyor": ArmoredConveyorBlock;
+    conveyor: ConveyorBlock;
+    "titanium-conveyor": ConveyorBlock;
     "plastanium-conveyor": StackConveyorBlock;
     "armored-conveyor": ArmoredConveyorBlock;
     junction: DefaultBlock;

@@ -107,6 +107,7 @@ export class DefaultBlock {
     configType: number = 0;
     size: number = 1;
     distributesPower: boolean = false;
+    hasPowerGrid: boolean = false;
 
     constructor(name: string, options: ExtraBlockOptions = {}) {
         if (DefaultBlock.autoprefix !== null) name = DefaultBlock.autoprefix + name;
@@ -114,6 +115,8 @@ export class DefaultBlock {
         if (options.size !== undefined) this.size = options.size;
         if (options.requirements !== undefined) this.requirements = options.requirements;
         if (options.powerConsumption !== undefined) this.powerConsumption = options.powerConsumption;
+
+        if(this.distributesPower || this.powerConsumption) this.hasPowerGrid = true;
     }
 
     public createBuilding(...args: ConstructorParameters<typeof DefaultBlock.building> extends [any, ...infer U] ? U : never): InstanceType<typeof this.building> {
@@ -134,8 +137,11 @@ export class DefaultBlock {
         }
 
         getTopLeftPosition(): [x: number, y: number] {
-            return [this.x - ((this.block.size-1)>>1), this.y - ((this.block.size)>>1)];
+            return [this.x - ((this.block.size - 1) >> 1), this.y - ((this.block.size) >> 1)];
         }
+        /**
+         * Get the building directly below this building (if size > 1, it will get the building just below the center)
+         */
         getBuildingDown(): DefaultBlockBuilding | null {
             const topLeftPos = this.getTopLeftPosition();
             return this.schematic.getBuildingAt(this.x, topLeftPos[1] + this.block.size);
@@ -152,6 +158,43 @@ export class DefaultBlock {
             const topLeftPos = this.getTopLeftPosition();
             return this.schematic.getBuildingAt(topLeftPos[0] + this.block.size, this.y);
         }
+        getBuildingsDown(): DefaultBlockBuilding[] {
+            const buildings: DefaultBlockBuilding[] = [];
+            const topLeftPos = this.getTopLeftPosition();
+            for (let x = 0; x < this.block.size; x++) {
+                const building = this.schematic.getBuildingAt(topLeftPos[0] + x, topLeftPos[1] + this.block.size);
+                if (building) buildings.push(building);
+            }
+            return buildings;
+        }
+        getBuildingsUp(): DefaultBlockBuilding[] {
+            const buildings: DefaultBlockBuilding[] = [];
+            const topLeftPos = this.getTopLeftPosition();
+            for (let x = 0; x < this.block.size; x++) {
+                const building = this.schematic.getBuildingAt(topLeftPos[0] + x, topLeftPos[1] - 1);
+                if (building) buildings.push(building);
+            }
+            return buildings;
+        }
+        getBuildingsLeft(): DefaultBlockBuilding[] {
+            const buildings: DefaultBlockBuilding[] = [];
+            const topLeftPos = this.getTopLeftPosition();
+            for (let y = 0; y < this.block.size; y++) {
+                const building = this.schematic.getBuildingAt(topLeftPos[0] - 1, topLeftPos[1] + y);
+                if (building) buildings.push(building);
+            }
+            return buildings;
+        }
+        getBuildingsRight(): DefaultBlockBuilding[] {
+            const buildings: Set<DefaultBlockBuilding> = new Set();
+            const topLeftPos = this.getTopLeftPosition();
+            for (let y = 0; y < this.block.size; y++) {
+                const building = this.schematic.getBuildingAt(topLeftPos[0] + this.block.size, topLeftPos[1] + y);
+                if (building) buildings.add(building);
+            }
+            return [...buildings];
+        }
+
         getBuildingAtRotation(direction: number = this.rotation): DefaultBlockBuilding | null {
             switch (direction) {
                 case Direction.right: return this.getBuildingRight();
@@ -173,7 +216,7 @@ export class DefaultBlock {
             let image = this.schematic.addon.requestImage(this.block.name);
             ctx.save();
             if (!image) {
-                return ctx.drawImage(DefaultBlock.ohno, offsetX + this.x*32- 8, offsetY + this.y*32 - 8)
+                return ctx.drawImage(DefaultBlock.ohno, offsetX + this.x * 32 - 8, offsetY + this.y * 32 - 8)
             };
             const posTop = this.getTopLeftPosition();
             offsetX += posTop[0] * 32;
@@ -194,6 +237,19 @@ export class DefaultBlock {
                 const img = this.schematic.addon.requestImage(name.replace(/@/g, this.block.name));
                 if (img) return img;
             }
+        }
+
+        /**
+         * Get all close buildings that this building connects to via power grid.
+         */
+        getConnectedPowerBuildings(): DefaultBlockBuilding[] {
+            if (!this.block.distributesPower) return [];
+            return [
+                ...this.getBuildingsUp(),
+                ...this.getBuildingsRight(),
+                ...this.getBuildingsDown(),
+                ...this.getBuildingsLeft()
+            ].filter(b => b.block.hasPowerGrid);
         }
     };
 
@@ -261,8 +317,8 @@ export class SchematicAddons {
     FluidColorRequesters: ((name: string) => (number | undefined))[] = [];
     TeamColorRequesters: ((teamId: number) => (number | undefined))[] = [];
     BlockMap: Record<string, DefaultBlock | undefined> = {};
-    Items: Map<string,Item> = new Map();
-    Fluids: Map<string,Fluid> = new Map();
+    Items: Map<string, Item> = new Map();
+    Fluids: Map<string, Fluid> = new Map();
 
     constructor(options?: SchematicAddonsConstructor) {
         if (!options) return;
@@ -408,7 +464,7 @@ export class Schematic {
         for (let i = 0; i < totalTiles; i++) {
             const blockId = inflatedBuffer.readUInt8(index);
             const x = inflatedBuffer.readUInt16BE(index + 1);
-            const y = this.height-1-inflatedBuffer.readUInt16BE(index + 3);
+            const y = this.height - 1 - inflatedBuffer.readUInt16BE(index + 3);
             index += 5;
             const [config, newIndex, configType] = Schematic.ReadObject(inflatedBuffer, index);
             index = newIndex;
@@ -440,7 +496,7 @@ export class Schematic {
             case 3: return [buffer.readFloatBE(index + 1), index + 5, byte];
             case 4: { // string
                 const notNull = buffer.readUint8(index + 1);
-                if(!notNull) return ["", index + 2, byte];
+                if (!notNull) return ["", index + 2, byte];
                 const length = buffer.readUInt16BE(index + 2);
                 index += 4;
                 return [buffer.toString("utf8", index, index + length), index + length, byte];
@@ -814,6 +870,48 @@ export class Schematic {
             }
         }
         return costMap;
+    }
+
+    /**
+     * Get groups of buildings that are connected via power distribution.
+     */
+    getPowerGroupBuildings(): Set<DefaultBlockBuilding>[] {
+        const visited = new Set<DefaultBlockBuilding>();
+        const groups: Set<DefaultBlockBuilding>[] = [];
+        for (const building of this.buildings) {
+            if (visited.has(building)) continue;
+            if (!building.block.hasPowerGrid) continue;
+            let group: Set<DefaultBlockBuilding> = new Set();
+            const toVisit: DefaultBlockBuilding[] = [building];
+            while (toVisit.length > 0) {
+                const current = toVisit.pop()!;
+                if (visited.has(current)) continue;
+                visited.add(current);
+                group.add(current);
+                const connected = current.getConnectedPowerBuildings();
+                for (const conn of connected) {
+                    if (!visited.has(conn)) {
+                        toVisit.push(conn);
+                        continue;
+                    }
+                    if (!group.has(conn)) {
+                        // Merge groups
+                        for (const g of groups) {
+                            if (g.has(conn)) {
+                                for (const b of g) {
+                                    group.add(b);
+                                }
+                                g.clear();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (group.size > 0) groups.push(group);
+
+        }
+        return groups.filter(g => g.size > 0);
     }
 
     static BuildingInfoChecker<T extends number>(typeNumber: T, info: BuildingInfo<any>): info is BuildingInfo<T> {

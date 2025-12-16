@@ -127,6 +127,7 @@ export declare class DefaultBlock {
     configType: number;
     size: number;
     distributesPower: boolean;
+    hasPowerGrid: boolean;
     constructor(name: string, options?: ExtraBlockOptions);
     createBuilding(...args: ConstructorParameters<typeof DefaultBlock.building> extends [any, ...infer U] ? U : never): InstanceType<typeof this.building>;
     static building: {
@@ -137,16 +138,27 @@ export declare class DefaultBlock {
             block: DefaultBlock;
             schematic: Schematic;
             getTopLeftPosition(): [x: number, y: number];
+            /**
+             * Get the building directly below this building (if size > 1, it will get the building just below the center)
+             */
             getBuildingDown(): /*elided*/ any | null;
             getBuildingUp(): /*elided*/ any | null;
             getBuildingLeft(): /*elided*/ any | null;
             getBuildingRight(): /*elided*/ any | null;
+            getBuildingsDown(): /*elided*/ any[];
+            getBuildingsUp(): /*elided*/ any[];
+            getBuildingsLeft(): /*elided*/ any[];
+            getBuildingsRight(): /*elided*/ any[];
             getBuildingAtRotation(direction?: number): /*elided*/ any | null;
             extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
             drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
             drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
             getConfigBuffer(): [type: number, buffer: Buffer | null];
             requestImage(...names: string[]): Image | undefined;
+            /**
+             * Get all close buildings that this building connects to via power grid.
+             */
+            getConnectedPowerBuildings(): /*elided*/ any[];
         };
     };
     get building(): typeof DefaultBlock['building'];
@@ -165,6 +177,9 @@ export declare class UnknownBlock extends DefaultBlock {
             y: number;
             rotation: number;
             getTopLeftPosition(): [x: number, y: number];
+            /**
+             * Get the building directly below this building (if size > 1, it will get the building just below the center)
+             */
             getBuildingDown(): {
                 x: number;
                 y: number;
@@ -172,16 +187,27 @@ export declare class UnknownBlock extends DefaultBlock {
                 block: DefaultBlock;
                 schematic: Schematic;
                 getTopLeftPosition(): [x: number, y: number];
+                /**
+                 * Get the building directly below this building (if size > 1, it will get the building just below the center)
+                 */
                 getBuildingDown(): /*elided*/ any | null;
                 getBuildingUp(): /*elided*/ any | null;
                 getBuildingLeft(): /*elided*/ any | null;
                 getBuildingRight(): /*elided*/ any | null;
+                getBuildingsDown(): /*elided*/ any[];
+                getBuildingsUp(): /*elided*/ any[];
+                getBuildingsLeft(): /*elided*/ any[];
+                getBuildingsRight(): /*elided*/ any[];
                 getBuildingAtRotation(direction?: number): /*elided*/ any | null;
                 extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
                 drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
                 drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
                 getConfigBuffer(): [type: number, buffer: Buffer | null];
                 requestImage(...names: string[]): Image | undefined;
+                /**
+                 * Get all close buildings that this building connects to via power grid.
+                 */
+                getConnectedPowerBuildings(): /*elided*/ any[];
             } | null;
             getBuildingUp(): {
                 x: number;
@@ -190,16 +216,27 @@ export declare class UnknownBlock extends DefaultBlock {
                 block: DefaultBlock;
                 schematic: Schematic;
                 getTopLeftPosition(): [x: number, y: number];
+                /**
+                 * Get the building directly below this building (if size > 1, it will get the building just below the center)
+                 */
                 getBuildingDown(): /*elided*/ any | null;
                 getBuildingUp(): /*elided*/ any | null;
                 getBuildingLeft(): /*elided*/ any | null;
                 getBuildingRight(): /*elided*/ any | null;
+                getBuildingsDown(): /*elided*/ any[];
+                getBuildingsUp(): /*elided*/ any[];
+                getBuildingsLeft(): /*elided*/ any[];
+                getBuildingsRight(): /*elided*/ any[];
                 getBuildingAtRotation(direction?: number): /*elided*/ any | null;
                 extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
                 drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
                 drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
                 getConfigBuffer(): [type: number, buffer: Buffer | null];
                 requestImage(...names: string[]): Image | undefined;
+                /**
+                 * Get all close buildings that this building connects to via power grid.
+                 */
+                getConnectedPowerBuildings(): /*elided*/ any[];
             } | null;
             getBuildingLeft(): {
                 x: number;
@@ -208,16 +245,27 @@ export declare class UnknownBlock extends DefaultBlock {
                 block: DefaultBlock;
                 schematic: Schematic;
                 getTopLeftPosition(): [x: number, y: number];
+                /**
+                 * Get the building directly below this building (if size > 1, it will get the building just below the center)
+                 */
                 getBuildingDown(): /*elided*/ any | null;
                 getBuildingUp(): /*elided*/ any | null;
                 getBuildingLeft(): /*elided*/ any | null;
                 getBuildingRight(): /*elided*/ any | null;
+                getBuildingsDown(): /*elided*/ any[];
+                getBuildingsUp(): /*elided*/ any[];
+                getBuildingsLeft(): /*elided*/ any[];
+                getBuildingsRight(): /*elided*/ any[];
                 getBuildingAtRotation(direction?: number): /*elided*/ any | null;
                 extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
                 drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
                 drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
                 getConfigBuffer(): [type: number, buffer: Buffer | null];
                 requestImage(...names: string[]): Image | undefined;
+                /**
+                 * Get all close buildings that this building connects to via power grid.
+                 */
+                getConnectedPowerBuildings(): /*elided*/ any[];
             } | null;
             getBuildingRight(): {
                 x: number;
@@ -226,17 +274,144 @@ export declare class UnknownBlock extends DefaultBlock {
                 block: DefaultBlock;
                 schematic: Schematic;
                 getTopLeftPosition(): [x: number, y: number];
+                /**
+                 * Get the building directly below this building (if size > 1, it will get the building just below the center)
+                 */
                 getBuildingDown(): /*elided*/ any | null;
                 getBuildingUp(): /*elided*/ any | null;
                 getBuildingLeft(): /*elided*/ any | null;
                 getBuildingRight(): /*elided*/ any | null;
+                getBuildingsDown(): /*elided*/ any[];
+                getBuildingsUp(): /*elided*/ any[];
+                getBuildingsLeft(): /*elided*/ any[];
+                getBuildingsRight(): /*elided*/ any[];
                 getBuildingAtRotation(direction?: number): /*elided*/ any | null;
                 extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
                 drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
                 drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
                 getConfigBuffer(): [type: number, buffer: Buffer | null];
                 requestImage(...names: string[]): Image | undefined;
+                /**
+                 * Get all close buildings that this building connects to via power grid.
+                 */
+                getConnectedPowerBuildings(): /*elided*/ any[];
             } | null;
+            getBuildingsDown(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                /**
+                 * Get the building directly below this building (if size > 1, it will get the building just below the center)
+                 */
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingsDown(): /*elided*/ any[];
+                getBuildingsUp(): /*elided*/ any[];
+                getBuildingsLeft(): /*elided*/ any[];
+                getBuildingsRight(): /*elided*/ any[];
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+                /**
+                 * Get all close buildings that this building connects to via power grid.
+                 */
+                getConnectedPowerBuildings(): /*elided*/ any[];
+            }[];
+            getBuildingsUp(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                /**
+                 * Get the building directly below this building (if size > 1, it will get the building just below the center)
+                 */
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingsDown(): /*elided*/ any[];
+                getBuildingsUp(): /*elided*/ any[];
+                getBuildingsLeft(): /*elided*/ any[];
+                getBuildingsRight(): /*elided*/ any[];
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+                /**
+                 * Get all close buildings that this building connects to via power grid.
+                 */
+                getConnectedPowerBuildings(): /*elided*/ any[];
+            }[];
+            getBuildingsLeft(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                /**
+                 * Get the building directly below this building (if size > 1, it will get the building just below the center)
+                 */
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingsDown(): /*elided*/ any[];
+                getBuildingsUp(): /*elided*/ any[];
+                getBuildingsLeft(): /*elided*/ any[];
+                getBuildingsRight(): /*elided*/ any[];
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+                /**
+                 * Get all close buildings that this building connects to via power grid.
+                 */
+                getConnectedPowerBuildings(): /*elided*/ any[];
+            }[];
+            getBuildingsRight(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                /**
+                 * Get the building directly below this building (if size > 1, it will get the building just below the center)
+                 */
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingsDown(): /*elided*/ any[];
+                getBuildingsUp(): /*elided*/ any[];
+                getBuildingsLeft(): /*elided*/ any[];
+                getBuildingsRight(): /*elided*/ any[];
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+                /**
+                 * Get all close buildings that this building connects to via power grid.
+                 */
+                getConnectedPowerBuildings(): /*elided*/ any[];
+            }[];
             getBuildingAtRotation(direction?: number): {
                 x: number;
                 y: number;
@@ -244,21 +419,64 @@ export declare class UnknownBlock extends DefaultBlock {
                 block: DefaultBlock;
                 schematic: Schematic;
                 getTopLeftPosition(): [x: number, y: number];
+                /**
+                 * Get the building directly below this building (if size > 1, it will get the building just below the center)
+                 */
                 getBuildingDown(): /*elided*/ any | null;
                 getBuildingUp(): /*elided*/ any | null;
                 getBuildingLeft(): /*elided*/ any | null;
                 getBuildingRight(): /*elided*/ any | null;
+                getBuildingsDown(): /*elided*/ any[];
+                getBuildingsUp(): /*elided*/ any[];
+                getBuildingsLeft(): /*elided*/ any[];
+                getBuildingsRight(): /*elided*/ any[];
                 getBuildingAtRotation(direction?: number): /*elided*/ any | null;
                 extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
                 drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
                 drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
                 getConfigBuffer(): [type: number, buffer: Buffer | null];
                 requestImage(...names: string[]): Image | undefined;
+                /**
+                 * Get all close buildings that this building connects to via power grid.
+                 */
+                getConnectedPowerBuildings(): /*elided*/ any[];
             } | null;
             extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
             drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
             drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
             requestImage(...names: string[]): Image | undefined;
+            /**
+             * Get all close buildings that this building connects to via power grid.
+             */
+            getConnectedPowerBuildings(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                /**
+                 * Get the building directly below this building (if size > 1, it will get the building just below the center)
+                 */
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingsDown(): /*elided*/ any[];
+                getBuildingsUp(): /*elided*/ any[];
+                getBuildingsLeft(): /*elided*/ any[];
+                getBuildingsRight(): /*elided*/ any[];
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+                /**
+                 * Get all close buildings that this building connects to via power grid.
+                 */
+                getConnectedPowerBuildings(): /*elided*/ any[];
+            }[];
         };
     };
 }
@@ -344,6 +562,10 @@ export declare class Schematic {
     getBuildingAt(x: number, y: number): DefaultBlockBuilding | null;
     toImageBuffer(): Buffer<ArrayBufferLike>;
     getBuildCost(): Map<Item, number>;
+    /**
+     * Get groups of buildings that are connected via power distribution.
+     */
+    getPowerGroupBuildings(): Set<DefaultBlockBuilding>[];
     static BuildingInfoChecker<T extends number>(typeNumber: T, info: BuildingInfo<any>): info is BuildingInfo<T>;
 }
 export {};

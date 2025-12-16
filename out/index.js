@@ -12,6 +12,7 @@ class DefaultBlock {
         this.configType = 0;
         this.size = 1;
         this.distributesPower = false;
+        this.hasPowerGrid = false;
         if (DefaultBlock.autoprefix !== null)
             name = DefaultBlock.autoprefix + name;
         this.name = name;
@@ -21,6 +22,8 @@ class DefaultBlock {
             this.requirements = options.requirements;
         if (options.powerConsumption !== undefined)
             this.powerConsumption = options.powerConsumption;
+        if (this.distributesPower || this.powerConsumption)
+            this.hasPowerGrid = true;
     }
     createBuilding(...args) {
         return new this.building(this, ...args);
@@ -47,6 +50,9 @@ DefaultBlock.building = class DefaultBlockBuilding {
     getTopLeftPosition() {
         return [this.x - ((this.block.size - 1) >> 1), this.y - ((this.block.size) >> 1)];
     }
+    /**
+     * Get the building directly below this building (if size > 1, it will get the building just below the center)
+     */
     getBuildingDown() {
         const topLeftPos = this.getTopLeftPosition();
         return this.schematic.getBuildingAt(this.x, topLeftPos[1] + this.block.size);
@@ -62,6 +68,46 @@ DefaultBlock.building = class DefaultBlockBuilding {
     getBuildingRight() {
         const topLeftPos = this.getTopLeftPosition();
         return this.schematic.getBuildingAt(topLeftPos[0] + this.block.size, this.y);
+    }
+    getBuildingsDown() {
+        const buildings = [];
+        const topLeftPos = this.getTopLeftPosition();
+        for (let x = 0; x < this.block.size; x++) {
+            const building = this.schematic.getBuildingAt(topLeftPos[0] + x, topLeftPos[1] + this.block.size);
+            if (building)
+                buildings.push(building);
+        }
+        return buildings;
+    }
+    getBuildingsUp() {
+        const buildings = [];
+        const topLeftPos = this.getTopLeftPosition();
+        for (let x = 0; x < this.block.size; x++) {
+            const building = this.schematic.getBuildingAt(topLeftPos[0] + x, topLeftPos[1] - 1);
+            if (building)
+                buildings.push(building);
+        }
+        return buildings;
+    }
+    getBuildingsLeft() {
+        const buildings = [];
+        const topLeftPos = this.getTopLeftPosition();
+        for (let y = 0; y < this.block.size; y++) {
+            const building = this.schematic.getBuildingAt(topLeftPos[0] - 1, topLeftPos[1] + y);
+            if (building)
+                buildings.push(building);
+        }
+        return buildings;
+    }
+    getBuildingsRight() {
+        const buildings = new Set();
+        const topLeftPos = this.getTopLeftPosition();
+        for (let y = 0; y < this.block.size; y++) {
+            const building = this.schematic.getBuildingAt(topLeftPos[0] + this.block.size, topLeftPos[1] + y);
+            if (building)
+                buildings.add(building);
+        }
+        return [...buildings];
     }
     getBuildingAtRotation(direction = this.rotation) {
         switch (direction) {
@@ -105,6 +151,19 @@ DefaultBlock.building = class DefaultBlockBuilding {
             if (img)
                 return img;
         }
+    }
+    /**
+     * Get all close buildings that this building connects to via power grid.
+     */
+    getConnectedPowerBuildings() {
+        if (!this.block.distributesPower)
+            return [];
+        return [
+            ...this.getBuildingsUp(),
+            ...this.getBuildingsRight(),
+            ...this.getBuildingsDown(),
+            ...this.getBuildingsLeft()
+        ].filter(b => b.block.hasPowerGrid);
     }
 };
 class UnknownBlock extends DefaultBlock {
@@ -691,6 +750,50 @@ class Schematic {
             }
         }
         return costMap;
+    }
+    /**
+     * Get groups of buildings that are connected via power distribution.
+     */
+    getPowerGroupBuildings() {
+        const visited = new Set();
+        const groups = [];
+        for (const building of this.buildings) {
+            if (visited.has(building))
+                continue;
+            if (!building.block.hasPowerGrid)
+                continue;
+            let group = new Set();
+            const toVisit = [building];
+            while (toVisit.length > 0) {
+                const current = toVisit.pop();
+                if (visited.has(current))
+                    continue;
+                visited.add(current);
+                group.add(current);
+                const connected = current.getConnectedPowerBuildings();
+                for (const conn of connected) {
+                    if (!visited.has(conn)) {
+                        toVisit.push(conn);
+                        continue;
+                    }
+                    if (!group.has(conn)) {
+                        // Merge groups
+                        for (const g of groups) {
+                            if (g.has(conn)) {
+                                for (const b of g) {
+                                    group.add(b);
+                                }
+                                g.clear();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (group.size > 0)
+                groups.push(group);
+        }
+        return groups.filter(g => g.size > 0);
     }
     static BuildingInfoChecker(typeNumber, info) {
         return info.configType === typeNumber;

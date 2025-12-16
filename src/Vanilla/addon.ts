@@ -1,5 +1,5 @@
 import { Image } from "canvas";
-import { BridgeBlock, ConduitBlock, StackConveyorBlock, DrillBlock, ProcessorBlock, SorterLikeBlock, ArmoredConveyorBlock, TurretBlock, CrafterBlock, SeparatorBlock, PhaseWaverBlock, PulverizerBlock, MultiPressBlock, StorageLikeBlock, ConsumerBlock, PowerNodeBlock, DiodeBlock, BatteryBlock, GeneratorBlock } from "./blocks";
+import { BridgeBlock, ConduitBlock, StackConveyorBlock, DrillBlock, ProcessorBlock, SorterLikeBlock, ArmoredConveyorBlock, TurretBlock, CrafterBlock, SeparatorBlock, PhaseWaverBlock, PulverizerBlock, MultiPressBlock, StorageLikeBlock, ConsumerBlock, PowerNodeBlock, DiodeBlock, BatteryBlock, GeneratorBlock, ConveyorBlock } from "./blocks";
 import { DefaultBlock, Fluid, Item, SchematicAddons } from "../index";
 import obj from "./minified_sprites.json"
 import { ItemTags } from "../helpers";
@@ -435,8 +435,8 @@ export const BlockMap = {
     // walls erekir
     // defense - erekir
     // #region distribution
-    "conveyor": new ArmoredConveyorBlock('conveyor', { requirements: [{ content: Items.get("copper")!, amount: 1 }] }),
-    "titanium-conveyor": new ArmoredConveyorBlock('titanium-conveyor', { requirements: [{ content: Items.get("titanium")!, amount: 1 }, { content: Items.get("copper")!, amount: 1 }, { content: Items.get("lead")!, amount: 1 }] }),
+    "conveyor": new ConveyorBlock('conveyor', { requirements: [{ content: Items.get("copper")!, amount: 1 }] }),
+    "titanium-conveyor": new ConveyorBlock('titanium-conveyor', { requirements: [{ content: Items.get("titanium")!, amount: 1 }, { content: Items.get("copper")!, amount: 1 }, { content: Items.get("lead")!, amount: 1 }] }),
     "plastanium-conveyor": new StackConveyorBlock('plastanium-conveyor', { requirements: [{ content: Items.get("plastanium")!, amount: 1 }, { content: Items.get("silicon")!, amount: 1 }, { content: Items.get("graphite")!, amount: 1 }] }),
     "armored-conveyor": new ArmoredConveyorBlock('armored-conveyor', { requirements: [{ content: Items.get("plastanium")!, amount: 1 }, { content: Items.get("thorium")!, amount: 1 }, { content: Items.get("metaglass")!, amount: 1 }] }),
     "junction": new DefaultBlock('junction', { requirements: [{ content: Items.get("copper")!, amount: 3 }] }),

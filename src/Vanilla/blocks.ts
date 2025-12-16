@@ -87,14 +87,12 @@ export class StackConveyorBlock extends StorageLikeBlock {
             } else {
                 image = this.requestImage(`@-0`);
                 edge = ~(sRecieving | (lookingToStack ? 0b0001 : 0));
-                console.log(sRecieving.toString(2).padStart(4, '0'), lookingToStack);
             }
             edge &= 0b1111;
             if (!image || !imageEdge) return ctx.drawImage(DefaultBlock.ohno, offsetX - 8, offsetY - 8);
 
             offsetX += this.x * 32;
             offsetY += this.y * 32;
-            console.log(edge.toString(2).padStart(4, '0'));
             ctx.save();
             ctx.translate(offsetX + 16, offsetY + 16);
             ctx.rotate((this.rotation ?? 0) * (-Math.PI / 2));
@@ -158,8 +156,13 @@ export class ConveyorBlock extends StorageLikeBlock {
             ctx.drawImage(image, offsetX, offsetY);
             ctx.restore();
         }
+        sendsItemsToDir(dir: number): boolean {
+            return this.rotation === dir;
+        }
+        receivesItemsFromDir(dir: number): boolean {
+            return true;
+        }
     }
-    // drawImage(schematic: Schematic, tile: Tile, ctx: CanvasRenderingContext2D, offsetX:number, offsetY: number): void {
 }
 export class ArmoredConveyorBlock extends StorageLikeBlock {
     public static building = class ArmoredConveyorBuilding extends StorageLikeBlock.building {
@@ -208,8 +211,13 @@ export class ArmoredConveyorBlock extends StorageLikeBlock {
             ctx.drawImage(image, offsetX, offsetY);
             ctx.restore();
         }
+        sendsItemsToDir(dir: number): boolean {
+            return this.rotation === dir;
+        }
+        receivesItemsFromDir(dir: number): boolean {
+            return true;
+        }
     }
-    // drawImage(schematic: Schematic, tile: Tile, ctx: CanvasRenderingContext2D, offsetX:number, offsetY: number): void {
 }
 export class ConduitBlock extends StorageLikeBlock {
     bottomColor = 0x565656;
@@ -242,7 +250,6 @@ export class ConduitBlock extends StorageLikeBlock {
             } else if (this.rotation === Direction.up) { // look up
                 blending = (right ? 1 : 0) | (down ? 2 : 0) | (left ? 4 : 0);
             }
-            console.log(blending)
             flip = (blending === 1) || (blending === 6);
             flipx = (this.rotation === Direction.up) || (this.rotation === Direction.down) ? true : false;
             imageId = [0, 1, 0, 2, 1, 4, 2, 3][blending]
@@ -717,20 +724,34 @@ export class ProcessorBlock extends DefaultBlock {
 
 export class PowerNodeBlock extends DefaultBlock {
     distributesPower: boolean = true;
+    hasPowerGrid: boolean = true;
     public static building = class PowerNodeBuilding extends DefaultBlock.building {
-        connectedBuildings: InstanceType<DefaultBlock["building"]>[] = [];
+        connectedCoords: { x: number, y: number }[] = [];
+        _connectedBuildings!: InstanceType<DefaultBlock["building"]>[];
+
         constructor(block: DefaultBlock, schematic: Schematic, info: BuildingInfo) {
             super(block, schematic, info);
-            if (Schematic.BuildingInfoChecker(8, info)) {
-                for (const coord of info.config) {
-                    const b = schematic.getBuildingAt(coord.x, coord.y);
-                    if (b) this.connectedBuildings.push(b);
-                }
+            if (Schematic.BuildingInfoChecker(8, info)) this.connectedCoords = info.config;
+        }
+
+        get connectedBuildings() {
+            if(this._connectedBuildings) return this._connectedBuildings;
+            this._connectedBuildings = [];
+            for (const coord of this.connectedCoords) {
+                const b = this.schematic.getBuildingAt(this.x+coord.x, this.y-coord.y);
+                if (b) this._connectedBuildings.push(b);
             }
+            return this._connectedBuildings;
+        }
+
+        getConnectedPowerBuildings(): InstanceType<typeof DefaultBlock.building>[] {
+            const buildings = super.getConnectedPowerBuildings();
+            return buildings.concat(this.connectedBuildings);
         }
     }
 }
 export class BatteryBlock extends DefaultBlock {
+    hasPowerGrid: boolean = true;
     holds: number;
     distributesPower: boolean = true;
     constructor(name: string, config: ExtraBlockOptions & { powerBuffer: number }) {
@@ -740,9 +761,15 @@ export class BatteryBlock extends DefaultBlock {
     public static building = class BatteryBuilding extends DefaultBlock.building {}
 }
 export class DiodeBlock extends DefaultBlock {
+    hasPowerGrid: boolean = true;
     public static building = class DiodeBuilding extends DefaultBlock.building {
-        sendsPowerToDir(dir: number): boolean {
-            return this.rotation === dir;
+        getConnectedPowerBuildings(): InstanceType<typeof DefaultBlock.building>[] {
+            const buildings = [];
+            const buildingfront = this.getBuildingAtRotation(this.rotation);
+            if (buildingfront && buildingfront.block.hasPowerGrid) buildings.push(buildingfront);
+            const buildingback = this.getBuildingAtRotation((this.rotation + 2) & 0b11);
+            if (buildingback && buildingback.block.hasPowerGrid) buildings.push(buildingback);
+            return buildings;
         }
     }
 }
