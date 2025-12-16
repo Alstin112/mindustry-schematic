@@ -2,54 +2,6 @@ import { BuildingInfo, DefaultBlock, ExtraBlockOptions, Fluid, Item, Schematic, 
 import { Direction } from '../helpers';
 import { deflateSync, inflateSync } from 'zlib';
 import { CanvasRenderingContext2D, Image } from 'canvas';
-import { off } from 'process';
-import { Items } from './addon';
-
-export interface ProcessorBlockConfig {
-    code: string,
-    activeLinks: { name: string, x: number, y: number }[]
-}
-
-
-export class ProcessorBlock extends DefaultBlock {
-
-    constructor(name: string) {
-        super(name);
-        this.configType = 14;
-    }
-
-    public static building = class ProcessorBuilding extends DefaultBlock.building {
-        public code: string;
-        public activeLinks: { name: string, x: number, y: number }[];
-        constructor(block: DefaultBlock, schematic: Schematic, infoRaw: BuildingInfo) {
-            super(block, schematic, infoRaw);
-            const info = infoRaw as BuildingInfo<14>;
-            const inflatedBuffer = inflateSync(info.config);
-            const version = inflatedBuffer.readUInt8(0);
-            if (version !== 1) throw new Error(`Unsupported config version ${version}`);
-            const codeSize = inflatedBuffer.readUInt32BE(1);
-            this.code = inflatedBuffer.toString('utf8', 5, 5 + codeSize);
-            let index = 5 + codeSize;
-            this.activeLinks = [];
-            const linkCount = inflatedBuffer.readUInt32BE(index);
-            index += 4;
-            for (let i = 0; i < linkCount; i++) {
-                const nameSize = inflatedBuffer.readUInt16BE(index);
-                index += 2;
-                const name = inflatedBuffer.toString('utf8', index, index + nameSize);
-                index += nameSize;
-                const x = inflatedBuffer.readInt16BE(index);
-                index += 2;
-                const y = inflatedBuffer.readInt16BE(index);
-                index += 2;
-                this.activeLinks.push({ name, x, y });
-            }
-        }
-    };
-}
-
-const a = new ProcessorBlock('logic-processor');
-const b = ProcessorBlock
 
 export class StorageLikeBlock extends DefaultBlock {
     public static building = class StorageBuilding extends DefaultBlock.building {
@@ -64,6 +16,12 @@ export class StorageLikeBlock extends DefaultBlock {
         }
         receivesFluidsFromDir(dir: number): boolean {
             return false;
+        }
+        getInputRate(): {content: Item | Fluid, amount: number}[] {
+            return [];
+        }
+        getOutputRate(): {content: Item | Fluid, amount: number}[] {
+            return [];
         }
     }
 }
@@ -527,7 +485,37 @@ export class DrillBlock extends StorageLikeBlock {
     }
     // drawImage(schematic: Schematic, tile: Tile, ctx: CanvasRenderingContext2D, offsetX:number, offsetY: number): void {
 }
+export class ConsumerBlock extends StorageLikeBlock {
+    input: { content: Item | Fluid, optional: boolean, amount: number }[] = [];
+    constructor(name: string, config: ExtraBlockOptions & { input?: { content: Item | Fluid, optional?: boolean, amount?: number }[] } = {}) {
+        super(name, config);
+        if (config.input !== undefined) {
+            for (const i of config.input) {
+                if (i.amount === undefined) i.amount = 1;
+                if (i.optional === undefined) i.optional = false;
+            }
+            this.input = config.input as { content: Item | Fluid, optional: boolean, amount: number }[];
+        }
+    }
 
+    public static building = class ConsumerBuilding extends StorageLikeBlock.building {
+        receivesFluidsFromDir(dir: number): boolean {
+            return (this.block as ConsumerBlock).input.some(i => i.content instanceof Fluid);
+        }
+        receivesItemsFromDir(dir: number): boolean {
+            return (this.block as ConsumerBlock).input.some(i => i.content instanceof Item);
+        }
+        getInputRate(): {content: Item | Fluid, amount: number}[] {
+            const block = this.block as ConsumerBlock;
+            const ContentRate: {content: Item | Fluid, amount: number}[] = [];
+            for (const i of block.input) {
+                if (i.optional) continue;
+                ContentRate.push({content: i.content, amount: i.amount}); 
+            }
+            return ContentRate;
+        }
+    }
+}
 
 interface CrafterBlockConfig extends ExtraBlockOptions {
     input: { item: Item | Fluid, amount: number }[],
@@ -536,7 +524,7 @@ interface CrafterBlockConfig extends ExtraBlockOptions {
 }
 export class CrafterBlock extends StorageLikeBlock {
     input: { item: Item | Fluid, amount: number }[] = [];
-    output: { item: Item | Fluid, amount: number }[] = []
+    output: { item: Item | Fluid, amount: number }[] = [];
     craftTime: number = 60;
 
     constructor(name: string, config: CrafterBlockConfig) {
@@ -566,7 +554,6 @@ export class CrafterBlock extends StorageLikeBlock {
     }
     // drawImage(schematic: Schematic, tile: Tile, ctx: CanvasRenderingContext2D, offsetX:number, offsetY: number): void {
 }
-
 export class PhaseWaverBlock extends CrafterBlock {
 
     constructor(name: string, config: CrafterBlockConfig) {
@@ -679,4 +666,45 @@ export class MultiPressBlock extends CrafterBlock {
             if (top) ctx.drawImage(top, offsetX, offsetY);
         }
     }
+}
+export interface ProcessorBlockConfig {
+    code: string,
+    activeLinks: { name: string, x: number, y: number }[]
+}
+
+export class ProcessorBlock extends DefaultBlock {
+
+    constructor(name: string) {
+        super(name);
+        this.configType = 14;
+    }
+
+    public static building = class ProcessorBuilding extends DefaultBlock.building {
+        public code: string;
+        public activeLinks: { name: string, x: number, y: number }[];
+        constructor(block: DefaultBlock, schematic: Schematic, infoRaw: BuildingInfo) {
+            super(block, schematic, infoRaw);
+            const info = infoRaw as BuildingInfo<14>;
+            const inflatedBuffer = inflateSync(info.config);
+            const version = inflatedBuffer.readUInt8(0);
+            if (version !== 1) throw new Error(`Unsupported config version ${version}`);
+            const codeSize = inflatedBuffer.readUInt32BE(1);
+            this.code = inflatedBuffer.toString('utf8', 5, 5 + codeSize);
+            let index = 5 + codeSize;
+            this.activeLinks = [];
+            const linkCount = inflatedBuffer.readUInt32BE(index);
+            index += 4;
+            for (let i = 0; i < linkCount; i++) {
+                const nameSize = inflatedBuffer.readUInt16BE(index);
+                index += 2;
+                const name = inflatedBuffer.toString('utf8', index, index + nameSize);
+                index += nameSize;
+                const x = inflatedBuffer.readInt16BE(index);
+                index += 2;
+                const y = inflatedBuffer.readInt16BE(index);
+                index += 2;
+                this.activeLinks.push({ name, x, y });
+            }
+        }
+    };
 }

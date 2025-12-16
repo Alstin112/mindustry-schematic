@@ -81,7 +81,7 @@ export type Config = {
 
 export interface ExtraBlockOptions {
     size?: number;
-    requirements?: { item: Item; amount: number; }[];
+    requirements?: { content: Item; amount: number; }[];
     powerConsumption?: number;
 }
 export class DefaultBlock {
@@ -97,7 +97,7 @@ export class DefaultBlock {
         zIndex: number
     })[] = [];
 
-    requirements: { item: Item; amount: number; }[] = [];
+    requirements: { content: Item; amount: number; }[] = [];
     powerConsumption: number = 0;
     name: string;
     configType: number = 0;
@@ -788,8 +788,8 @@ export class Schematic {
         const costMap: Map<Item, number> = new Map();
         for (const building of this.buildings) {
             for (const req of building.block.requirements) {
-                const current = costMap.get(req.item) ?? 0;
-                costMap.set(req.item, current + req.amount);
+                const current = costMap.get(req.content) ?? 0;
+                costMap.set(req.content, current + req.amount);
             }
         }
         return costMap;

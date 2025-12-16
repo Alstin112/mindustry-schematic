@@ -1,45 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MultiPressBlock = exports.PulverizerBlock = exports.SeparatorBlock = exports.PhaseWaverBlock = exports.CrafterBlock = exports.DrillBlock = exports.SorterLikeBlock = exports.BridgeBlock = exports.TurretBlock = exports.ConduitBlock = exports.ArmoredConveyorBlock = exports.ConveyorBlock = exports.StackConveyorBlock = exports.StorageLikeBlock = exports.ProcessorBlock = void 0;
+exports.ProcessorBlock = exports.MultiPressBlock = exports.PulverizerBlock = exports.SeparatorBlock = exports.PhaseWaverBlock = exports.CrafterBlock = exports.ConsumerBlock = exports.DrillBlock = exports.SorterLikeBlock = exports.BridgeBlock = exports.TurretBlock = exports.ConduitBlock = exports.ArmoredConveyorBlock = exports.ConveyorBlock = exports.StackConveyorBlock = exports.StorageLikeBlock = void 0;
 const index_1 = require("../index");
 const helpers_1 = require("../helpers");
 const zlib_1 = require("zlib");
-class ProcessorBlock extends index_1.DefaultBlock {
-    constructor(name) {
-        super(name);
-        this.configType = 14;
-    }
-}
-exports.ProcessorBlock = ProcessorBlock;
-ProcessorBlock.building = class ProcessorBuilding extends index_1.DefaultBlock.building {
-    constructor(block, schematic, infoRaw) {
-        super(block, schematic, infoRaw);
-        const info = infoRaw;
-        const inflatedBuffer = (0, zlib_1.inflateSync)(info.config);
-        const version = inflatedBuffer.readUInt8(0);
-        if (version !== 1)
-            throw new Error(`Unsupported config version ${version}`);
-        const codeSize = inflatedBuffer.readUInt32BE(1);
-        this.code = inflatedBuffer.toString('utf8', 5, 5 + codeSize);
-        let index = 5 + codeSize;
-        this.activeLinks = [];
-        const linkCount = inflatedBuffer.readUInt32BE(index);
-        index += 4;
-        for (let i = 0; i < linkCount; i++) {
-            const nameSize = inflatedBuffer.readUInt16BE(index);
-            index += 2;
-            const name = inflatedBuffer.toString('utf8', index, index + nameSize);
-            index += nameSize;
-            const x = inflatedBuffer.readInt16BE(index);
-            index += 2;
-            const y = inflatedBuffer.readInt16BE(index);
-            index += 2;
-            this.activeLinks.push({ name, x, y });
-        }
-    }
-};
-const a = new ProcessorBlock('logic-processor');
-const b = ProcessorBlock;
 class StorageLikeBlock extends index_1.DefaultBlock {
 }
 exports.StorageLikeBlock = StorageLikeBlock;
@@ -55,6 +19,12 @@ StorageLikeBlock.building = class StorageBuilding extends index_1.DefaultBlock.b
     }
     receivesFluidsFromDir(dir) {
         return false;
+    }
+    getInputRate() {
+        return [];
+    }
+    getOutputRate() {
+        return [];
     }
 };
 class StackConveyorBlock extends StorageLikeBlock {
@@ -537,6 +507,40 @@ DrillBlock.building = class DrillBuilding extends StorageLikeBlock.building {
         ctx.globalCompositeOperation = 'source-over';
     }
 };
+class ConsumerBlock extends StorageLikeBlock {
+    constructor(name, config = {}) {
+        super(name, config);
+        this.input = [];
+        if (config.input !== undefined) {
+            for (const i of config.input) {
+                if (i.amount === undefined)
+                    i.amount = 1;
+                if (i.optional === undefined)
+                    i.optional = false;
+            }
+            this.input = config.input;
+        }
+    }
+}
+exports.ConsumerBlock = ConsumerBlock;
+ConsumerBlock.building = class ConsumerBuilding extends StorageLikeBlock.building {
+    receivesFluidsFromDir(dir) {
+        return this.block.input.some(i => i.content instanceof index_1.Fluid);
+    }
+    receivesItemsFromDir(dir) {
+        return this.block.input.some(i => i.content instanceof index_1.Item);
+    }
+    getInputRate() {
+        const block = this.block;
+        const ContentRate = [];
+        for (const i of block.input) {
+            if (i.optional)
+                continue;
+            ContentRate.push({ content: i.content, amount: i.amount });
+        }
+        return ContentRate;
+    }
+};
 class CrafterBlock extends StorageLikeBlock {
     constructor(name, config) {
         super(name, config);
@@ -686,5 +690,39 @@ MultiPressBlock.building = class MultiPressBuilding extends CrafterBlock.buildin
         // if (liquid) ctx.drawImage(liquid, offsetX, offsetY);
         if (top)
             ctx.drawImage(top, offsetX, offsetY);
+    }
+};
+class ProcessorBlock extends index_1.DefaultBlock {
+    constructor(name) {
+        super(name);
+        this.configType = 14;
+    }
+}
+exports.ProcessorBlock = ProcessorBlock;
+ProcessorBlock.building = class ProcessorBuilding extends index_1.DefaultBlock.building {
+    constructor(block, schematic, infoRaw) {
+        super(block, schematic, infoRaw);
+        const info = infoRaw;
+        const inflatedBuffer = (0, zlib_1.inflateSync)(info.config);
+        const version = inflatedBuffer.readUInt8(0);
+        if (version !== 1)
+            throw new Error(`Unsupported config version ${version}`);
+        const codeSize = inflatedBuffer.readUInt32BE(1);
+        this.code = inflatedBuffer.toString('utf8', 5, 5 + codeSize);
+        let index = 5 + codeSize;
+        this.activeLinks = [];
+        const linkCount = inflatedBuffer.readUInt32BE(index);
+        index += 4;
+        for (let i = 0; i < linkCount; i++) {
+            const nameSize = inflatedBuffer.readUInt16BE(index);
+            index += 2;
+            const name = inflatedBuffer.toString('utf8', index, index + nameSize);
+            index += nameSize;
+            const x = inflatedBuffer.readInt16BE(index);
+            index += 2;
+            const y = inflatedBuffer.readInt16BE(index);
+            index += 2;
+            this.activeLinks.push({ name, x, y });
+        }
     }
 };

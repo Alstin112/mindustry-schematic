@@ -102,7 +102,7 @@ export type Config = {
 export interface ExtraBlockOptions {
     size?: number;
     requirements?: {
-        item: Item;
+        content: Item;
         amount: number;
     }[];
     powerConsumption?: number;
@@ -115,7 +115,7 @@ export declare class DefaultBlock {
         zIndex: number;
     })[];
     requirements: {
-        item: Item;
+        content: Item;
         amount: number;
     }[];
     powerConsumption: number;
