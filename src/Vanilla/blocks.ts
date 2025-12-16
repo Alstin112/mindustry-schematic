@@ -28,20 +28,8 @@ export class StorageLikeBlock extends DefaultBlock {
 export class StackConveyorBlock extends StorageLikeBlock {
     public static building = class StackConveyorBuilding extends StorageLikeBlock.building {
         drawImage(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number): void {
-            const imageMiddle = this.requestImage(`@-0`) ?? null;
-            const imageStart = this.requestImage(`@-1`) ?? null;
-            const imageEnd = this.requestImage(`@-2`) ?? null;
             const imageEdge = this.requestImage(`@-edge`) ?? null;
 
-            // let image: Image | null = null;
-            let flipx = false;
-            let imageId = 0;
-            // relativos
-            // 0 - normal
-            // 1 - vem esquerda
-            // 2 - vem direita trás
-            // 3 - vem esquerda direita e trás
-            // 4 - vem esquerda e direita
             const left = this.getBuildingLeft()?.extends(StorageLikeBlock)?.sendsItemsToDir(Direction.right)
             const right = this.getBuildingRight()?.extends(StorageLikeBlock)?.sendsItemsToDir(Direction.left)
             const up = this.getBuildingUp()?.extends(StorageLikeBlock)?.sendsItemsToDir(Direction.down)
@@ -56,7 +44,6 @@ export class StackConveyorBlock extends StorageLikeBlock {
 
             let bRecieving = 0;
             let sRecieving = 0;
-            let flip = false;
             switch (this.rotation) {
                 case Direction.right:
                     bRecieving = (right ? 1 : 0) | (down ? 2 : 0) | (left ? 4 : 0) | (up ? 8 : 0);
@@ -115,12 +102,6 @@ export class ConveyorBlock extends StorageLikeBlock {
             // let image: Image | null = null;
             let flipx = false;
             let imageId = 0;
-            // relativos
-            // 0 - normal
-            // 1 - vem esquerda
-            // 2 - vem direita trás
-            // 3 - vem esquerda direita e trás
-            // 4 - vem esquerda e direita
             const left = this.getBuildingLeft()?.extends(StorageLikeBlock)?.sendsItemsToDir(Direction.right)
             const right = this.getBuildingRight()?.extends(StorageLikeBlock)?.sendsItemsToDir(Direction.left)
             const up = this.getBuildingUp()?.extends(StorageLikeBlock)?.sendsItemsToDir(Direction.down)
@@ -132,9 +113,9 @@ export class ConveyorBlock extends StorageLikeBlock {
                 blending = (down ? 1 : 0) | (left ? 2 : 0) | (up ? 4 : 0);
             } else if (this.rotation === Direction.down) {
                 blending = (left ? 1 : 0) | (up ? 2 : 0) | (right ? 4 : 0);
-            } else if (this.rotation === Direction.left) { // look left
+            } else if (this.rotation === Direction.left) {
                 blending = (up ? 1 : 0) | (right ? 2 : 0) | (down ? 4 : 0);
-            } else if (this.rotation === Direction.up) { // look up
+            } else if (this.rotation === Direction.up) {
                 blending = (right ? 1 : 0) | (down ? 2 : 0) | (left ? 4 : 0);
             }
             flip = (blending === 1) || (blending === 6);
@@ -170,12 +151,6 @@ export class ArmoredConveyorBlock extends StorageLikeBlock {
             // let image: Image | null = null;
             let flipx = false;
             let imageId = 0;
-            // relativos
-            // 0 - normal
-            // 1 - vem esquerda
-            // 2 - vem direita trás
-            // 3 - vem esquerda direita e trás
-            // 4 - vem esquerda e direita
             const left = this.getBuildingLeft()?.extends(ConveyorBlock)?.sendsItemsToDir(Direction.right)
             const right = this.getBuildingRight()?.extends(ConveyorBlock)?.sendsItemsToDir(Direction.left)
             const up = this.getBuildingUp()?.extends(ConveyorBlock)?.sendsItemsToDir(Direction.down)
@@ -187,9 +162,9 @@ export class ArmoredConveyorBlock extends StorageLikeBlock {
                 blending = (down ? 1 : 0) | (left ? 2 : 0) | (up ? 4 : 0);
             } else if (this.rotation === Direction.down) {
                 blending = (left ? 1 : 0) | (up ? 2 : 0) | (right ? 4 : 0);
-            } else if (this.rotation === Direction.left) { // look left
+            } else if (this.rotation === Direction.left) {
                 blending = (up ? 1 : 0) | (right ? 2 : 0) | (down ? 4 : 0);
-            } else if (this.rotation === Direction.up) { // look up
+            } else if (this.rotation === Direction.up) {
                 blending = (right ? 1 : 0) | (down ? 2 : 0) | (left ? 4 : 0);
             }
             flip = (blending === 1) || (blending === 6);

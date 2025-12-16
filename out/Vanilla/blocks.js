@@ -32,32 +32,19 @@ class StackConveyorBlock extends StorageLikeBlock {
 exports.StackConveyorBlock = StackConveyorBlock;
 StackConveyorBlock.building = class StackConveyorBuilding extends StorageLikeBlock.building {
     drawImage(ctx, offsetX, offsetY) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x;
-        const imageMiddle = (_a = this.requestImage(`@-0`)) !== null && _a !== void 0 ? _a : null;
-        const imageStart = (_b = this.requestImage(`@-1`)) !== null && _b !== void 0 ? _b : null;
-        const imageEnd = (_c = this.requestImage(`@-2`)) !== null && _c !== void 0 ? _c : null;
-        const imageEdge = (_d = this.requestImage(`@-edge`)) !== null && _d !== void 0 ? _d : null;
-        // let image: Image | null = null;
-        let flipx = false;
-        let imageId = 0;
-        // relativos
-        // 0 - normal
-        // 1 - vem esquerda
-        // 2 - vem direita trás
-        // 3 - vem esquerda direita e trás
-        // 4 - vem esquerda e direita
-        const left = (_f = (_e = this.getBuildingLeft()) === null || _e === void 0 ? void 0 : _e.extends(StorageLikeBlock)) === null || _f === void 0 ? void 0 : _f.sendsItemsToDir(helpers_1.Direction.right);
-        const right = (_h = (_g = this.getBuildingRight()) === null || _g === void 0 ? void 0 : _g.extends(StorageLikeBlock)) === null || _h === void 0 ? void 0 : _h.sendsItemsToDir(helpers_1.Direction.left);
-        const up = (_k = (_j = this.getBuildingUp()) === null || _j === void 0 ? void 0 : _j.extends(StorageLikeBlock)) === null || _k === void 0 ? void 0 : _k.sendsItemsToDir(helpers_1.Direction.down);
-        const down = (_m = (_l = this.getBuildingDown()) === null || _l === void 0 ? void 0 : _l.extends(StorageLikeBlock)) === null || _m === void 0 ? void 0 : _m.sendsItemsToDir(helpers_1.Direction.up);
-        const stackLeft = ((_p = (_o = this.getBuildingLeft()) === null || _o === void 0 ? void 0 : _o.extends(StackConveyorBlock)) === null || _p === void 0 ? void 0 : _p.rotation) === helpers_1.Direction.right;
-        const stackRight = ((_r = (_q = this.getBuildingRight()) === null || _q === void 0 ? void 0 : _q.extends(StackConveyorBlock)) === null || _r === void 0 ? void 0 : _r.rotation) === helpers_1.Direction.left;
-        const stackUp = ((_t = (_s = this.getBuildingUp()) === null || _s === void 0 ? void 0 : _s.extends(StackConveyorBlock)) === null || _t === void 0 ? void 0 : _t.rotation) === helpers_1.Direction.down;
-        const stackDown = ((_v = (_u = this.getBuildingDown()) === null || _u === void 0 ? void 0 : _u.extends(StackConveyorBlock)) === null || _v === void 0 ? void 0 : _v.rotation) === helpers_1.Direction.up;
-        const lookingToStack = !!((_w = this.getBuildingAtRotation()) === null || _w === void 0 ? void 0 : _w.extends(StackConveyorBlock));
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u;
+        const imageEdge = (_a = this.requestImage(`@-edge`)) !== null && _a !== void 0 ? _a : null;
+        const left = (_c = (_b = this.getBuildingLeft()) === null || _b === void 0 ? void 0 : _b.extends(StorageLikeBlock)) === null || _c === void 0 ? void 0 : _c.sendsItemsToDir(helpers_1.Direction.right);
+        const right = (_e = (_d = this.getBuildingRight()) === null || _d === void 0 ? void 0 : _d.extends(StorageLikeBlock)) === null || _e === void 0 ? void 0 : _e.sendsItemsToDir(helpers_1.Direction.left);
+        const up = (_g = (_f = this.getBuildingUp()) === null || _f === void 0 ? void 0 : _f.extends(StorageLikeBlock)) === null || _g === void 0 ? void 0 : _g.sendsItemsToDir(helpers_1.Direction.down);
+        const down = (_j = (_h = this.getBuildingDown()) === null || _h === void 0 ? void 0 : _h.extends(StorageLikeBlock)) === null || _j === void 0 ? void 0 : _j.sendsItemsToDir(helpers_1.Direction.up);
+        const stackLeft = ((_l = (_k = this.getBuildingLeft()) === null || _k === void 0 ? void 0 : _k.extends(StackConveyorBlock)) === null || _l === void 0 ? void 0 : _l.rotation) === helpers_1.Direction.right;
+        const stackRight = ((_o = (_m = this.getBuildingRight()) === null || _m === void 0 ? void 0 : _m.extends(StackConveyorBlock)) === null || _o === void 0 ? void 0 : _o.rotation) === helpers_1.Direction.left;
+        const stackUp = ((_q = (_p = this.getBuildingUp()) === null || _p === void 0 ? void 0 : _p.extends(StackConveyorBlock)) === null || _q === void 0 ? void 0 : _q.rotation) === helpers_1.Direction.down;
+        const stackDown = ((_s = (_r = this.getBuildingDown()) === null || _r === void 0 ? void 0 : _r.extends(StackConveyorBlock)) === null || _s === void 0 ? void 0 : _s.rotation) === helpers_1.Direction.up;
+        const lookingToStack = !!((_t = this.getBuildingAtRotation()) === null || _t === void 0 ? void 0 : _t.extends(StackConveyorBlock));
         let bRecieving = 0;
         let sRecieving = 0;
-        let flip = false;
         switch (this.rotation) {
             case helpers_1.Direction.right:
                 bRecieving = (right ? 1 : 0) | (down ? 2 : 0) | (left ? 4 : 0) | (up ? 8 : 0);
@@ -97,7 +84,7 @@ StackConveyorBlock.building = class StackConveyorBuilding extends StorageLikeBlo
         offsetY += this.y * 32;
         ctx.save();
         ctx.translate(offsetX + 16, offsetY + 16);
-        ctx.rotate(((_x = this.rotation) !== null && _x !== void 0 ? _x : 0) * (-Math.PI / 2));
+        ctx.rotate(((_u = this.rotation) !== null && _u !== void 0 ? _u : 0) * (-Math.PI / 2));
         ctx.drawImage(image, -16, -16);
         if (edge & 0b0001)
             ctx.drawImage(imageEdge, -16, -16);
@@ -122,12 +109,6 @@ ConveyorBlock.building = class ConveyorBuilding extends StorageLikeBlock.buildin
         // let image: Image | null = null;
         let flipx = false;
         let imageId = 0;
-        // relativos
-        // 0 - normal
-        // 1 - vem esquerda
-        // 2 - vem direita trás
-        // 3 - vem esquerda direita e trás
-        // 4 - vem esquerda e direita
         const left = (_b = (_a = this.getBuildingLeft()) === null || _a === void 0 ? void 0 : _a.extends(StorageLikeBlock)) === null || _b === void 0 ? void 0 : _b.sendsItemsToDir(helpers_1.Direction.right);
         const right = (_d = (_c = this.getBuildingRight()) === null || _c === void 0 ? void 0 : _c.extends(StorageLikeBlock)) === null || _d === void 0 ? void 0 : _d.sendsItemsToDir(helpers_1.Direction.left);
         const up = (_f = (_e = this.getBuildingUp()) === null || _e === void 0 ? void 0 : _e.extends(StorageLikeBlock)) === null || _f === void 0 ? void 0 : _f.sendsItemsToDir(helpers_1.Direction.down);
@@ -140,10 +121,10 @@ ConveyorBlock.building = class ConveyorBuilding extends StorageLikeBlock.buildin
         else if (this.rotation === helpers_1.Direction.down) {
             blending = (left ? 1 : 0) | (up ? 2 : 0) | (right ? 4 : 0);
         }
-        else if (this.rotation === helpers_1.Direction.left) { // look left
+        else if (this.rotation === helpers_1.Direction.left) {
             blending = (up ? 1 : 0) | (right ? 2 : 0) | (down ? 4 : 0);
         }
-        else if (this.rotation === helpers_1.Direction.up) { // look up
+        else if (this.rotation === helpers_1.Direction.up) {
             blending = (right ? 1 : 0) | (down ? 2 : 0) | (left ? 4 : 0);
         }
         flip = (blending === 1) || (blending === 6);
@@ -183,12 +164,6 @@ ArmoredConveyorBlock.building = class ArmoredConveyorBuilding extends StorageLik
         // let image: Image | null = null;
         let flipx = false;
         let imageId = 0;
-        // relativos
-        // 0 - normal
-        // 1 - vem esquerda
-        // 2 - vem direita trás
-        // 3 - vem esquerda direita e trás
-        // 4 - vem esquerda e direita
         const left = (_b = (_a = this.getBuildingLeft()) === null || _a === void 0 ? void 0 : _a.extends(ConveyorBlock)) === null || _b === void 0 ? void 0 : _b.sendsItemsToDir(helpers_1.Direction.right);
         const right = (_d = (_c = this.getBuildingRight()) === null || _c === void 0 ? void 0 : _c.extends(ConveyorBlock)) === null || _d === void 0 ? void 0 : _d.sendsItemsToDir(helpers_1.Direction.left);
         const up = (_f = (_e = this.getBuildingUp()) === null || _e === void 0 ? void 0 : _e.extends(ConveyorBlock)) === null || _f === void 0 ? void 0 : _f.sendsItemsToDir(helpers_1.Direction.down);
@@ -201,10 +176,10 @@ ArmoredConveyorBlock.building = class ArmoredConveyorBuilding extends StorageLik
         else if (this.rotation === helpers_1.Direction.down) {
             blending = (left ? 1 : 0) | (up ? 2 : 0) | (right ? 4 : 0);
         }
-        else if (this.rotation === helpers_1.Direction.left) { // look left
+        else if (this.rotation === helpers_1.Direction.left) {
             blending = (up ? 1 : 0) | (right ? 2 : 0) | (down ? 4 : 0);
         }
-        else if (this.rotation === helpers_1.Direction.up) { // look up
+        else if (this.rotation === helpers_1.Direction.up) {
             blending = (right ? 1 : 0) | (down ? 2 : 0) | (left ? 4 : 0);
         }
         flip = (blending === 1) || (blending === 6);
