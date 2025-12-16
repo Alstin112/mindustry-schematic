@@ -9,6 +9,7 @@ const canvas_1 = require("canvas");
 const blocks_1 = require("./blocks");
 const index_1 = require("../index");
 const minified_sprites_json_1 = __importDefault(require("./minified_sprites.json"));
+const helpers_1 = require("../helpers");
 const ImagesObject = {};
 for (const key of Object.keys(minified_sprites_json_1.default)) {
     const img = new canvas_1.Image();
@@ -19,28 +20,28 @@ function ImageRequester(blockName) {
     return ImagesObject[blockName];
 }
 exports.Items = new Map([
-    ["copper", new index_1.Item("copper", 0xd99d73),],
-    ["lead", new index_1.Item("lead", 0x8c7fa9),],
-    ["metaglass", new index_1.Item("metaglass", 0xebeef5),],
-    ["graphite", new index_1.Item("graphite", 0xb2c6d2),],
-    ["sand", new index_1.Item("sand", 0xf7cba4),],
-    ["coal", new index_1.Item("coal", 0x272727),],
-    ["titanium", new index_1.Item("titanium", 0x8da1e3),],
-    ["thorium", new index_1.Item("thorium", 0xf9a3c7),],
-    ["scrap", new index_1.Item("scrap", 0x777777),],
-    ["silicon", new index_1.Item("silicon", 0x53565c),],
-    ["plastanium", new index_1.Item("plastanium", 0xcbd97f),],
-    ["phase-fabric", new index_1.Item("phase-fabric", 0xf4ba6e),],
-    ["surge-alloy", new index_1.Item("surge-alloy", 0xf3e979),],
-    ["spore-pod", new index_1.Item("spore-pod", 0x7457ce),],
-    ["blast-compound", new index_1.Item("blast-compound", 0xff795e),],
-    ["pyratite", new index_1.Item("pyratite", 0xffaa5f),],
-    ["beryllium", new index_1.Item("beryllium", 0x3a8f64),],
-    ["tungsten", new index_1.Item("tungsten", 0x768a9a),],
-    ["oxide", new index_1.Item("oxide", 0xe4ffd6),],
-    ["carbide", new index_1.Item("carbide", 0x89769a),],
-    ["fissile-matter", new index_1.Item("fissile-matter", 0x5e988d),],
-    ["dormant-cyst", new index_1.Item("dormant-cyst", 0xdf824d)],
+    ["copper", new index_1.Item("copper", 0xd99d73)],
+    ["lead", new index_1.Item("lead", 0x8c7fa9)],
+    ["metaglass", new index_1.Item("metaglass", 0xebeef5)],
+    ["graphite", new index_1.Item("graphite", 0xb2c6d2)],
+    ["sand", new index_1.Item("sand", 0xf7cba4)],
+    ["coal", new index_1.Item("coal", 0x272727, { flammability: 1, explosiveness: 0.8 })],
+    ["titanium", new index_1.Item("titanium", 0x8da1e3)],
+    ["thorium", new index_1.Item("thorium", 0xf9a3c7, { explosiveness: 0.2, radioactivity: 1 })],
+    ["scrap", new index_1.Item("scrap", 0x777777)],
+    ["silicon", new index_1.Item("silicon", 0x53565c, { flammability: 0.1, explosiveness: 0.2 })],
+    ["plastanium", new index_1.Item("plastanium", 0xcbd97f)],
+    ["phase-fabric", new index_1.Item("phase-fabric", 0xf4ba6e, { radioactivity: 0.6 })],
+    ["surge-alloy", new index_1.Item("surge-alloy", 0xf3e979)],
+    ["spore-pod", new index_1.Item("spore-pod", 0x7457ce, { flammability: 1.15 })],
+    ["blast-compound", new index_1.Item("blast-compound", 0xff795e, { flammability: 0.4, explosiveness: 1.2 })],
+    ["pyratite", new index_1.Item("pyratite", 0xffaa5f, { flammability: 1.4, explosiveness: 0.4 })],
+    ["beryllium", new index_1.Item("beryllium", 0x3a8f64)],
+    ["tungsten", new index_1.Item("tungsten", 0x768a9a)],
+    ["oxide", new index_1.Item("oxide", 0xe4ffd6)],
+    ["carbide", new index_1.Item("carbide", 0x89769a)],
+    ["fissile-matter", new index_1.Item("fissile-matter", 0x5e988d, { radioactivity: 1.5 })],
+    ["dormant-cyst", new index_1.Item("dormant-cyst", 0xdf824d, { flammability: 0.1 })],
 ]);
 exports.Fluids = new Map([
     ["water", new index_1.Fluid("water", 0x596ab8)],
@@ -129,7 +130,6 @@ exports.BlockMap = {
         craftTime: 75,
         size: 3,
         // 		itemCapacity = 20;,
-        // 		drawer = new DrawMulti(new DrawDefault(), new DrawFlame());,
         powerConsumption: 4,
         input: [{ item: exports.Items.get("copper"), amount: 3 }, { item: exports.Items.get("lead"), amount: 4 }, { item: exports.Items.get("titanium"), amount: 2 }, { item: exports.Items.get("silicon"), amount: 3 }]
     }),
@@ -137,7 +137,6 @@ exports.BlockMap = {
         requirements: [{ content: exports.Items.get("lead"), amount: 65 }, { content: exports.Items.get("silicon"), amount: 40 }, { content: exports.Items.get("titanium"), amount: 60 }],
         output: [{ item: exports.Fluids.get("cryofluid"), amount: 12 }],
         size: 2,
-        // 		drawer = new DrawMulti(new DrawRegion("-bottom"), new DrawLiquidTile(Liquids.water), new DrawLiquidTile(Liquids.cryofluid, {drawLiquidLight = true;}}, new DrawDefault());,
         // 		liquidCapacity = 36f;,
         craftTime: 120,
         // 		lightLiquid = Liquids.cryofluid;,
@@ -162,7 +161,6 @@ exports.BlockMap = {
         requirements: [{ content: exports.Items.get("copper"), amount: 30 }, { content: exports.Items.get("lead"), amount: 35 }, { content: exports.Items.get("graphite"), amount: 45 }],
         output: [{ item: exports.Fluids.get("slag"), amount: 12 }],
         craftTime: 10,
-        // 		drawer = new DrawMulti(new DrawRegion("-bottom"), new DrawLiquidTile(), new DrawDefault());,
         powerConsumption: 60,
         input: [{ item: exports.Items.get("scrap"), amount: 1 }]
     }),
@@ -431,7 +429,97 @@ exports.BlockMap = {
     "conduit": new blocks_1.ConduitBlock('conduit'),
     "pulse-conduit": new blocks_1.ConduitBlock('pulse-conduit'),
     // liquid - reinforced
-    // power
+    // #region power
+    "power-node": new blocks_1.PowerNodeBlock("power-node", {
+        requirements: [{ content: exports.Items.get("copper"), amount: 2 }, { content: exports.Items.get("lead"), amount: 6 }],
+    }),
+    "power-node-large": new blocks_1.PowerNodeBlock("power-node-large", {
+        requirements: [{ content: exports.Items.get("titanium"), amount: 5 }, { content: exports.Items.get("lead"), amount: 10 }, { content: exports.Items.get("silicon"), amount: 3 }],
+        size: 2,
+    }),
+    "surge-tower": new blocks_1.PowerNodeBlock("surge-tower", {
+        requirements: [{ content: exports.Items.get("titanium"), amount: 7 }, { content: exports.Items.get("lead"), amount: 10 }, { content: exports.Items.get("silicon"), amount: 15 }, { content: exports.Items.get("surge-alloy"), amount: 15 }],
+        size: 2,
+    }),
+    "diode": new blocks_1.DiodeBlock("diode", {
+        requirements: [{ content: exports.Items.get("silicon"), amount: 10 }, { content: exports.Items.get("plastanium"), amount: 5 }, { content: exports.Items.get("metaglass"), amount: 10 }],
+    }),
+    "battery": new blocks_1.BatteryBlock("battery", {
+        requirements: [{ content: exports.Items.get("copper"), amount: 5 }, { content: exports.Items.get("lead"), amount: 20 }],
+        powerBuffer: 4000,
+    }),
+    "battery-large": new blocks_1.BatteryBlock("battery-large", {
+        requirements: [{ content: exports.Items.get("titanium"), amount: 20 }, { content: exports.Items.get("lead"), amount: 50 }, { content: exports.Items.get("silicon"), amount: 30 }],
+        size: 3,
+        powerBuffer: 50000,
+    }),
+    "combustion-generator": new blocks_1.GeneratorBlock("combustion-generator", {
+        requirements: [{ content: exports.Items.get("copper"), amount: 25 }, { content: exports.Items.get("lead"), amount: 15 }],
+        generates: 120,
+        input: [{ content: helpers_1.ItemTags.flammable, optional: true }, { content: helpers_1.ItemTags.explosive, optional: true }],
+    }),
+    "thermal-generator": new blocks_1.GeneratorBlock("thermal-generator", {
+        requirements: [{ content: exports.Items.get("copper"), amount: 40 }, { content: exports.Items.get("graphite"), amount: 35 }, { content: exports.Items.get("lead"), amount: 50 }, { content: exports.Items.get("silicon"), amount: 35 }, { content: exports.Items.get("metaglass"), amount: 40 }],
+        generates: 108,
+        size: 2,
+    }),
+    "steam-generator": new blocks_1.GeneratorBlock("steam-generator", {
+        requirements: [{ content: exports.Items.get("copper"), amount: 35 }, { content: exports.Items.get("graphite"), amount: 25 }, { content: exports.Items.get("lead"), amount: 40 }, { content: exports.Items.get("silicon"), amount: 30 }],
+        generates: 330,
+        size: 2,
+        input: [
+            { content: exports.Fluids.get("water"), amount: 6 },
+            { content: helpers_1.ItemTags.flammable, optional: true, amount: 60 / 90 },
+            { content: helpers_1.ItemTags.explosive, optional: true, amount: 60 / 90 }
+        ],
+    }),
+    "differential-generator": new blocks_1.GeneratorBlock("differential-generator", {
+        requirements: [{ content: exports.Items.get("copper"), amount: 70 }, { content: exports.Items.get("titanium"), amount: 50 }, { content: exports.Items.get("lead"), amount: 100 }, { content: exports.Items.get("silicon"), amount: 65 }, { content: exports.Items.get("metaglass"), amount: 50 }],
+        generates: 648,
+        size: 3,
+        input: [
+            { content: exports.Fluids.get("cryofluid"), amount: 6 },
+            { content: exports.Items.get("pyratite"), amount: 60 / 220 },
+        ],
+    }),
+    "rtg-generator": new blocks_1.GeneratorBlock("rtg-generator", {
+        requirements: [{ content: exports.Items.get("lead"), amount: 100 }, { content: exports.Items.get("silicon"), amount: 75 }, { content: exports.Items.get("phase-fabric"), amount: 25 }, { content: exports.Items.get("plastanium"), amount: 75 }, { content: exports.Items.get("thorium"), amount: 50 }],
+        size: 2,
+        generates: 270,
+        input: [
+            { content: exports.Items.get("phase-fabric"), amount: 1 / 210, optional: true },
+            { content: helpers_1.ItemTags.radioactive, optional: true, amount: 1 / 14 }
+        ],
+    }),
+    "solar-panel": new blocks_1.GeneratorBlock("solar-panel", {
+        requirements: [{ content: exports.Items.get("lead"), amount: 10 }, { content: exports.Items.get("silicon"), amount: 8 }],
+        generates: 7.2
+    }),
+    "solar-panel-large": new blocks_1.GeneratorBlock("solar-panel-large", {
+        requirements: [{ content: exports.Items.get("lead"), amount: 60 }, { content: exports.Items.get("silicon"), amount: 70 }, { content: exports.Items.get("phase-fabric"), amount: 15 }],
+        size: 3,
+        generates: 63.6
+    }),
+    "thorium-reactor": new blocks_1.GeneratorBlock("thorium-reactor", {
+        requirements: [{ content: exports.Items.get("lead"), amount: 300 }, { content: exports.Items.get("silicon"), amount: 200 }, { content: exports.Items.get("graphite"), amount: 150 }, { content: exports.Items.get("thorium"), amount: 150 }, { content: exports.Items.get("metaglass"), amount: 50 }],
+        size: 3,
+        generates: 900,
+        input: [
+            { content: exports.Items.get("thorium"), amount: 1 / 60 },
+            { content: exports.Fluids.get("cryofluid"), amount: 2.4 }
+        ],
+    }),
+    "impact-reactor": new blocks_1.GeneratorBlock("impact-reactor", {
+        requirements: [{ content: exports.Items.get("lead"), amount: 500 }, { content: exports.Items.get("silicon"), amount: 300 }, { content: exports.Items.get("graphite"), amount: 400 }, { content: exports.Items.get("thorium"), amount: 100 }, { content: exports.Items.get("surge-alloy"), amount: 250 }, { content: exports.Items.get("metaglass"), amount: 250 }],
+        size: 4,
+        generates: 6360,
+        powerConsumption: 1500,
+        input: [
+            { content: exports.Items.get("blast-compound"), amount: 60 / 140 },
+            { content: exports.Fluids.get("cryofluid"), amount: 15 }
+        ]
+    }),
+    // #endregion
     // power - erekir
     // production
     "mechanical-drill": new blocks_1.DrillBlock('mechanical-drill', { size: 2 }),

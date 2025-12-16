@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProcessorBlock = exports.MultiPressBlock = exports.PulverizerBlock = exports.SeparatorBlock = exports.PhaseWaverBlock = exports.CrafterBlock = exports.ConsumerBlock = exports.DrillBlock = exports.SorterLikeBlock = exports.BridgeBlock = exports.TurretBlock = exports.ConduitBlock = exports.ArmoredConveyorBlock = exports.ConveyorBlock = exports.StackConveyorBlock = exports.StorageLikeBlock = void 0;
+exports.GeneratorBlock = exports.DiodeBlock = exports.BatteryBlock = exports.PowerNodeBlock = exports.ProcessorBlock = exports.MultiPressBlock = exports.PulverizerBlock = exports.SeparatorBlock = exports.PhaseWaverBlock = exports.CrafterBlock = exports.ConsumerBlock = exports.DrillBlock = exports.SorterLikeBlock = exports.BridgeBlock = exports.TurretBlock = exports.ConduitBlock = exports.ArmoredConveyorBlock = exports.ConveyorBlock = exports.StackConveyorBlock = exports.StorageLikeBlock = void 0;
 const index_1 = require("../index");
 const helpers_1 = require("../helpers");
 const zlib_1 = require("zlib");
@@ -528,13 +528,21 @@ ConsumerBlock.building = class ConsumerBuilding extends StorageLikeBlock.buildin
         return this.block.input.some(i => i.content instanceof index_1.Fluid);
     }
     receivesItemsFromDir(dir) {
-        return this.block.input.some(i => i.content instanceof index_1.Item);
+        for (const i of this.block.input) {
+            if (i.content instanceof index_1.Item)
+                return true;
+            if (Object.values(helpers_1.ItemTags).includes(i.content))
+                return true;
+        }
+        return false;
     }
     getInputRate() {
         const block = this.block;
         const ContentRate = [];
         for (const i of block.input) {
             if (i.optional)
+                continue;
+            if (typeof i.content === "symbol")
                 continue;
             ContentRate.push({ content: i.content, amount: i.amount });
         }
@@ -726,3 +734,50 @@ ProcessorBlock.building = class ProcessorBuilding extends index_1.DefaultBlock.b
         }
     }
 };
+class PowerNodeBlock extends index_1.DefaultBlock {
+    constructor() {
+        super(...arguments);
+        this.distributesPower = true;
+    }
+}
+exports.PowerNodeBlock = PowerNodeBlock;
+PowerNodeBlock.building = class PowerNodeBuilding extends index_1.DefaultBlock.building {
+    constructor(block, schematic, info) {
+        super(block, schematic, info);
+        this.connectedBuildings = [];
+        if (index_1.Schematic.BuildingInfoChecker(8, info)) {
+            for (const coord of info.config) {
+                const b = schematic.getBuildingAt(coord.x, coord.y);
+                if (b)
+                    this.connectedBuildings.push(b);
+            }
+        }
+    }
+};
+class BatteryBlock extends index_1.DefaultBlock {
+    constructor(name, config) {
+        super(name, config);
+        this.distributesPower = true;
+        this.holds = config.powerBuffer;
+    }
+}
+exports.BatteryBlock = BatteryBlock;
+BatteryBlock.building = class BatteryBuilding extends index_1.DefaultBlock.building {
+};
+class DiodeBlock extends index_1.DefaultBlock {
+}
+exports.DiodeBlock = DiodeBlock;
+DiodeBlock.building = class DiodeBuilding extends index_1.DefaultBlock.building {
+    sendsPowerToDir(dir) {
+        return this.rotation === dir;
+    }
+};
+class GeneratorBlock extends ConsumerBlock {
+    constructor(name, config) {
+        var _a;
+        super(name, config);
+        this.distributesPower = true;
+        this.generates = (_a = config.generates) !== null && _a !== void 0 ? _a : 0;
+    }
+}
+exports.GeneratorBlock = GeneratorBlock;

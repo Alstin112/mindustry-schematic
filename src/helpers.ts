@@ -4,3 +4,9 @@ export const Direction = {
     left: 2,
     down: 3,
 } as const;
+
+export const ItemTags = {
+    flammable: Symbol("flammable"),
+    explosive: Symbol("explosive"),
+    radioactive: Symbol("radioactive"),
+} as const;

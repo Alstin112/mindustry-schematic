@@ -1103,13 +1103,13 @@ export declare class DrillBlock extends StorageLikeBlock {
 }
 export declare class ConsumerBlock extends StorageLikeBlock {
     input: {
-        content: Item | Fluid;
+        content: Item | Fluid | symbol;
         optional: boolean;
         amount: number;
     }[];
     constructor(name: string, config?: ExtraBlockOptions & {
         input?: {
-            content: Item | Fluid;
+            content: Item | Fluid | symbol;
             optional?: boolean;
             amount?: number;
         }[];
@@ -1978,6 +1978,345 @@ export declare class ProcessorBlock extends DefaultBlock {
             requestImage(...names: string[]): Image | undefined;
         };
     };
+}
+export declare class PowerNodeBlock extends DefaultBlock {
+    distributesPower: boolean;
+    static building: {
+        new (block: DefaultBlock, schematic: Schematic, info: BuildingInfo): {
+            connectedBuildings: InstanceType<DefaultBlock["building"]>[];
+            x: number;
+            y: number;
+            rotation: number;
+            block: DefaultBlock;
+            schematic: Schematic;
+            getTopLeftPosition(): [x: number, y: number];
+            getBuildingDown(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            getBuildingUp(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            getBuildingLeft(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            getBuildingRight(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            getBuildingAtRotation(direction?: number): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+            drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+            drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+            getConfigBuffer(): [type: number, buffer: Buffer | null];
+            requestImage(...names: string[]): Image | undefined;
+        };
+    };
+}
+export declare class BatteryBlock extends DefaultBlock {
+    holds: number;
+    distributesPower: boolean;
+    constructor(name: string, config: ExtraBlockOptions & {
+        powerBuffer: number;
+    });
+    static building: {
+        new (block: DefaultBlock, schematic: Schematic, { x, y, rotation }: BuildingInfo): {
+            x: number;
+            y: number;
+            rotation: number;
+            block: DefaultBlock;
+            schematic: Schematic;
+            getTopLeftPosition(): [x: number, y: number];
+            getBuildingDown(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            getBuildingUp(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            getBuildingLeft(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            getBuildingRight(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            getBuildingAtRotation(direction?: number): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+            drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+            drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+            getConfigBuffer(): [type: number, buffer: Buffer | null];
+            requestImage(...names: string[]): Image | undefined;
+        };
+    };
+}
+export declare class DiodeBlock extends DefaultBlock {
+    static building: {
+        new (block: DefaultBlock, schematic: Schematic, { x, y, rotation }: BuildingInfo): {
+            sendsPowerToDir(dir: number): boolean;
+            x: number;
+            y: number;
+            rotation: number;
+            block: DefaultBlock;
+            schematic: Schematic;
+            getTopLeftPosition(): [x: number, y: number];
+            getBuildingDown(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            getBuildingUp(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            getBuildingLeft(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            getBuildingRight(): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            getBuildingAtRotation(direction?: number): {
+                x: number;
+                y: number;
+                rotation: number;
+                block: DefaultBlock;
+                schematic: Schematic;
+                getTopLeftPosition(): [x: number, y: number];
+                getBuildingDown(): /*elided*/ any | null;
+                getBuildingUp(): /*elided*/ any | null;
+                getBuildingLeft(): /*elided*/ any | null;
+                getBuildingRight(): /*elided*/ any | null;
+                getBuildingAtRotation(direction?: number): /*elided*/ any | null;
+                extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+                drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+                getConfigBuffer(): [type: number, buffer: Buffer | null];
+                requestImage(...names: string[]): Image | undefined;
+            } | null;
+            extends<T extends (typeof DefaultBlock)>(block: T): InstanceType<T["building"]> | null;
+            drawImage(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+            drawOverlay(ctx: CanvasRenderingContext2D, offsetX?: number, offsetY?: number): void;
+            getConfigBuffer(): [type: number, buffer: Buffer | null];
+            requestImage(...names: string[]): Image | undefined;
+        };
+    };
+}
+type ExtraOptions<T extends typeof DefaultBlock> = T extends {
+    new (name: string, config: infer U): any;
+} ? U extends undefined ? never : U : never;
+export declare class GeneratorBlock extends ConsumerBlock {
+    distributesPower: boolean;
+    generates: number;
+    constructor(name: string, config: ExtraOptions<typeof ConsumerBlock> & {
+        generates: number;
+    });
 }
 export {};
 //# sourceMappingURL=blocks.d.ts.map

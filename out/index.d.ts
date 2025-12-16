@@ -69,6 +69,9 @@ export type Config = {
     configType: 14;
     config: Buffer;
 } | {
+    configType: 16;
+    config: boolean[];
+} | {
     configType: 17;
     config: number;
 } | {
@@ -106,6 +109,7 @@ export interface ExtraBlockOptions {
         amount: number;
     }[];
     powerConsumption?: number;
+    distributesPower?: boolean;
 }
 export declare class DefaultBlock {
     static autoprefix: string | null;
@@ -122,6 +126,7 @@ export declare class DefaultBlock {
     name: string;
     configType: number;
     size: number;
+    distributesPower: boolean;
     constructor(name: string, options?: ExtraBlockOptions);
     createBuilding(...args: ConstructorParameters<typeof DefaultBlock.building> extends [any, ...infer U] ? U : never): InstanceType<typeof this.building>;
     static building: {
@@ -260,7 +265,14 @@ export declare class UnknownBlock extends DefaultBlock {
 export declare class Item {
     name: string;
     color: number;
-    constructor(name: string, color?: number);
+    explosivenesse: number;
+    flammability: number;
+    radioactivity: number;
+    constructor(name: string, color: number, options?: {
+        explosiveness?: number;
+        flammability?: number;
+        radioactivity?: number;
+    });
 }
 export declare class Fluid {
     name: string;

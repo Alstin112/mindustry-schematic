@@ -4,4 +4,9 @@ export declare const Direction: {
     readonly left: 2;
     readonly down: 3;
 };
+export declare const ItemTags: {
+    readonly flammable: symbol;
+    readonly explosive: symbol;
+    readonly radioactive: symbol;
+};
 //# sourceMappingURL=helpers.d.ts.map

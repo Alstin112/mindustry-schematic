@@ -86,6 +86,7 @@ export interface ExtraBlockOptions {
     size?: number;
     requirements?: { content: Item; amount: number; }[];
     powerConsumption?: number;
+    distributesPower?: boolean;
 }
 export class DefaultBlock {
     static autoprefix: string | null = null;
@@ -105,6 +106,7 @@ export class DefaultBlock {
     name: string;
     configType: number = 0;
     size: number = 1;
+    distributesPower: boolean = false;
 
     constructor(name: string, options: ExtraBlockOptions = {}) {
         if (DefaultBlock.autoprefix !== null) name = DefaultBlock.autoprefix + name;
@@ -220,9 +222,17 @@ export class UnknownBlock extends DefaultBlock {
 export class Item {
     name: string;
     color: number;
-    constructor(name: string, color?: number) {
+    explosivenesse: number = 0;
+    flammability: number = 0;
+    radioactivity: number = 0;
+    constructor(name: string, color: number, options?: { explosiveness?: number; flammability?: number; radioactivity?: number; }) {
         this.name = name;
         this.color = color ?? 0;
+        if (options) {
+            if (options.explosiveness !== undefined) this.explosivenesse = options.explosiveness;
+            if (options.flammability !== undefined) this.flammability = options.flammability;
+            if (options.radioactivity !== undefined) this.radioactivity = options.radioactivity;
+        }
     }
 }
 export class Fluid {

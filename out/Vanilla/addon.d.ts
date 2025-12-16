@@ -1,5 +1,5 @@
 import { Image } from "canvas";
-import { BridgeBlock, ConduitBlock, StackConveyorBlock, DrillBlock, ProcessorBlock, SorterLikeBlock, ArmoredConveyorBlock, TurretBlock, CrafterBlock, SeparatorBlock, PhaseWaverBlock, PulverizerBlock, MultiPressBlock, ConsumerBlock } from "./blocks";
+import { BridgeBlock, ConduitBlock, StackConveyorBlock, DrillBlock, ProcessorBlock, SorterLikeBlock, ArmoredConveyorBlock, TurretBlock, CrafterBlock, SeparatorBlock, PhaseWaverBlock, PulverizerBlock, MultiPressBlock, ConsumerBlock, PowerNodeBlock, DiodeBlock, BatteryBlock, GeneratorBlock } from "./blocks";
 import { DefaultBlock, Fluid, Item, SchematicAddons } from "../index";
 export declare function ImageRequester(blockName: string): Image;
 export declare const Items: Map<"copper" | "lead" | "metaglass" | "graphite" | "sand" | "coal" | "titanium" | "thorium" | "scrap" | "silicon" | "plastanium" | "phase-fabric" | "surge-alloy" | "spore-pod" | "blast-compound" | "pyratite" | "beryllium" | "tungsten" | "oxide" | "carbide" | "fissile-matter" | "dormant-cyst", Item>;
@@ -80,6 +80,21 @@ export declare const BlockMap: {
     "mass-driver": DefaultBlock;
     conduit: ConduitBlock;
     "pulse-conduit": ConduitBlock;
+    "power-node": PowerNodeBlock;
+    "power-node-large": PowerNodeBlock;
+    "surge-tower": PowerNodeBlock;
+    diode: DiodeBlock;
+    battery: BatteryBlock;
+    "battery-large": BatteryBlock;
+    "combustion-generator": GeneratorBlock;
+    "thermal-generator": GeneratorBlock;
+    "steam-generator": GeneratorBlock;
+    "differential-generator": GeneratorBlock;
+    "rtg-generator": GeneratorBlock;
+    "solar-panel": GeneratorBlock;
+    "solar-panel-large": GeneratorBlock;
+    "thorium-reactor": GeneratorBlock;
+    "impact-reactor": GeneratorBlock;
     "mechanical-drill": DrillBlock;
     "pneumatic-drill": DrillBlock;
     "laser-drill": DrillBlock;

@@ -11,6 +11,7 @@ class DefaultBlock {
         this.powerConsumption = 0;
         this.configType = 0;
         this.size = 1;
+        this.distributesPower = false;
         if (DefaultBlock.autoprefix !== null)
             name = DefaultBlock.autoprefix + name;
         this.name = name;
@@ -125,9 +126,20 @@ UnknownBlock.building = class unknownBlockBuilding extends DefaultBlock.building
     }
 };
 class Item {
-    constructor(name, color) {
+    constructor(name, color, options) {
+        this.explosivenesse = 0;
+        this.flammability = 0;
+        this.radioactivity = 0;
         this.name = name;
         this.color = color !== null && color !== void 0 ? color : 0;
+        if (options) {
+            if (options.explosiveness !== undefined)
+                this.explosivenesse = options.explosiveness;
+            if (options.flammability !== undefined)
+                this.flammability = options.flammability;
+            if (options.radioactivity !== undefined)
+                this.radioactivity = options.radioactivity;
+        }
     }
 }
 exports.Item = Item;
@@ -316,7 +328,7 @@ class Schematic {
             case 1: return [buffer.readInt8(index + 1), index + 2, byte];
             case 2: return [buffer.readBigInt64BE(index + 1), index + 9, byte];
             case 3: return [buffer.readFloatBE(index + 1), index + 5, byte];
-            case 4: {
+            case 4: { // string
                 const notNull = buffer.readUint8(index + 1);
                 if (!notNull)
                     return ["", index + 2, byte];
@@ -329,7 +341,7 @@ class Schematic {
                 const id = buffer.readUInt16BE(index + 2);
                 return [{ type, id }, index + 4, byte];
             }
-            case 6: {
+            case 6: { // IntSeq
                 const length = buffer.readUInt16BE(index + 1);
                 const array = new Int16Array(length);
                 for (let i = 0; i < length; i++) {
@@ -337,12 +349,12 @@ class Schematic {
                 }
                 return [array, index + 3 + length * 2, byte];
             }
-            case 7: {
+            case 7: { // Point2
                 const x = buffer.readInt32BE(index + 1);
                 const y = buffer.readInt32BE(index + 5);
                 return [{ x, y }, index + 9, byte];
             }
-            case 8: {
+            case 8: { // Point2[]
                 const length = buffer.readUInt8(index + 1);
                 const array = [];
                 for (let i = 0; i < length; i++) {
@@ -367,15 +379,23 @@ class Schematic {
             case 13: { // LAccess
                 return [buffer.readUInt16BE(index + 1), index + 3, byte];
             }
-            case 14: {
+            case 14: { // byte[]
                 const length = buffer.readUInt32BE(index + 1);
                 const nbuffer = buffer.subarray(index + 5, index + 5 + length);
                 return [nbuffer, index + 5 + length, byte];
             }
+            case 16: { // boolean[]
+                const byteLength = buffer.readUInt32BE(index + 1);
+                const array = [];
+                for (let i = 0; i < byteLength; i++) {
+                    array.push(!!buffer.readUInt8(index + 5 + i));
+                }
+                return [array, index + 5 + byteLength, byte];
+            }
             case 17: { // Unid/UnitBox
                 const id = buffer.readUInt32BE(index + 1);
             }
-            case 18: {
+            case 18: { // Vec2[]
                 const length = buffer.readUInt16BE(index + 1);
                 const vecs = [];
                 for (let i = 0; i < length; i++) {
@@ -386,7 +406,7 @@ class Schematic {
                 }
                 return [vecs, index + 3 + length * 8, byte];
             }
-            case 19: {
+            case 19: { // Vec2
                 const x = buffer.readFloatBE(index + 1);
                 const y = buffer.readFloatBE(index + 5);
                 return [{ x, y }, index + 9, byte];
@@ -394,7 +414,7 @@ class Schematic {
             case 20: { // Team
                 return [buffer.readUInt8(index + 1), index + 2, byte];
             }
-            case 21: {
+            case 21: { // int[]
                 const length = buffer.readUInt16BE(index + 1);
                 const array = new Uint32Array(length);
                 for (let i = 0; i < length; i++) {
@@ -402,7 +422,7 @@ class Schematic {
                 }
                 return [array, index + 3 + length * 4, byte];
             }
-            case 22: {
+            case 22: { // Object[]
                 const ObjsLength = buffer.readUInt32BE(index + 1);
                 const array = [];
                 index += 5;

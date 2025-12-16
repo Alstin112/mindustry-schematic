@@ -1,5 +1,5 @@
 import { BuildingInfo, DefaultBlock, ExtraBlockOptions, Fluid, Item, Schematic, SchematicAddons } from '../index';
-import { Direction } from '../helpers';
+import { Direction, ItemTags } from '../helpers';
 import { deflateSync, inflateSync } from 'zlib';
 import { CanvasRenderingContext2D, Image } from 'canvas';
 
@@ -486,15 +486,15 @@ export class DrillBlock extends StorageLikeBlock {
     // drawImage(schematic: Schematic, tile: Tile, ctx: CanvasRenderingContext2D, offsetX:number, offsetY: number): void {
 }
 export class ConsumerBlock extends StorageLikeBlock {
-    input: { content: Item | Fluid, optional: boolean, amount: number }[] = [];
-    constructor(name: string, config: ExtraBlockOptions & { input?: { content: Item | Fluid, optional?: boolean, amount?: number }[] } = {}) {
+    input: { content: Item | Fluid | symbol, optional: boolean, amount: number }[] = [];
+    constructor(name: string, config: ExtraBlockOptions & { input?: { content: Item | Fluid | symbol, optional?: boolean, amount?: number }[] } = {}) {
         super(name, config);
         if (config.input !== undefined) {
             for (const i of config.input) {
                 if (i.amount === undefined) i.amount = 1;
                 if (i.optional === undefined) i.optional = false;
             }
-            this.input = config.input as { content: Item | Fluid, optional: boolean, amount: number }[];
+            this.input = config.input as { content: Item | Fluid | symbol, optional: boolean, amount: number }[];
         }
     }
 
@@ -503,13 +503,18 @@ export class ConsumerBlock extends StorageLikeBlock {
             return (this.block as ConsumerBlock).input.some(i => i.content instanceof Fluid);
         }
         receivesItemsFromDir(dir: number): boolean {
-            return (this.block as ConsumerBlock).input.some(i => i.content instanceof Item);
+            for (const i of (this.block as ConsumerBlock).input) {
+                if (i.content instanceof Item) return true;
+                if (Object.values(ItemTags).includes(i.content as symbol)) return true;
+            }
+            return false;
         }
         getInputRate(): {content: Item | Fluid, amount: number}[] {
             const block = this.block as ConsumerBlock;
             const ContentRate: {content: Item | Fluid, amount: number}[] = [];
             for (const i of block.input) {
                 if (i.optional) continue;
+                if (typeof i.content === "symbol") continue;
                 ContentRate.push({content: i.content, amount: i.amount}); 
             }
             return ContentRate;
@@ -707,4 +712,50 @@ export class ProcessorBlock extends DefaultBlock {
             }
         }
     };
+}
+
+
+export class PowerNodeBlock extends DefaultBlock {
+    distributesPower: boolean = true;
+    public static building = class PowerNodeBuilding extends DefaultBlock.building {
+        connectedBuildings: InstanceType<DefaultBlock["building"]>[] = [];
+        constructor(block: DefaultBlock, schematic: Schematic, info: BuildingInfo) {
+            super(block, schematic, info);
+            if (Schematic.BuildingInfoChecker(8, info)) {
+                for (const coord of info.config) {
+                    const b = schematic.getBuildingAt(coord.x, coord.y);
+                    if (b) this.connectedBuildings.push(b);
+                }
+            }
+        }
+    }
+}
+export class BatteryBlock extends DefaultBlock {
+    holds: number;
+    distributesPower: boolean = true;
+    constructor(name: string, config: ExtraBlockOptions & { powerBuffer: number }) {
+        super(name, config);
+        this.holds = config.powerBuffer;
+    }
+    public static building = class BatteryBuilding extends DefaultBlock.building {}
+}
+export class DiodeBlock extends DefaultBlock {
+    public static building = class DiodeBuilding extends DefaultBlock.building {
+        sendsPowerToDir(dir: number): boolean {
+            return this.rotation === dir;
+        }
+    }
+}
+
+// Get the parameters of the constructor
+type ExtraOptions<T extends typeof DefaultBlock> = T extends { new(name: string, config: infer U): any } ? U extends undefined ? never : U : never;
+
+type a = ExtraOptions<typeof DefaultBlock>;
+export class GeneratorBlock extends ConsumerBlock {
+    distributesPower: boolean = true;
+    generates: number;
+    constructor(name: string, config: ExtraOptions<typeof ConsumerBlock> & { generates: number }) {
+        super(name, config);
+        this.generates = (config as any).generates ?? 0;
+    }
 }
