@@ -453,7 +453,7 @@ export class Schematic {
                 const y = buffer.readInt32BE(index + 5);
                 return [{ x, y }, index + 9, byte];
             }
-            case 8: { // Points2[]
+            case 8: { // Point2[]
                 const length = buffer.readUInt8(index + 1);
                 const array: { x: number, y: number }[] = [];
                 for (let i = 0; i < length; i++) {
